@@ -5,5 +5,15 @@ A small mobile money app for transactions
 
 clone the repository with
 ```
-git clone 
+git clone https://github.com/Tomdieu/TransferGo.git
+```
+
+navigate to the backend directory with
+```
+cd TransferGo/src/backend
+```
+
+Run the runserver with 
+```
+python manage.py runserver
 ```
