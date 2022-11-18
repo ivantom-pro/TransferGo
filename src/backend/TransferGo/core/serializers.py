@@ -10,6 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'first_name', 'last_name', 'password']
 
+# Je propose que quand on cree un User on cree un profile et un compte directement
 
 class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
