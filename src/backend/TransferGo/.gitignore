@@ -6,5 +6,4 @@ venv
 **.idea**
 *.log
 *media*
-*.sqlite3
 .idea
