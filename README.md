@@ -14,7 +14,7 @@ git clone https://github.com/<github-username>/TransferGo.git
 
 navigate to the backend directory with
 ```
-cd TransferGo/src/backend
+cd TransferGo/src/backend/TransferGO
 ```
 
 Run the runserver with 
@@ -32,9 +32,11 @@ cd TransferGo/src/frontend
 - contribute to any of the folder in the directory
 - make a pull request with
  ```
- git push
+ git pull origin main
  ```
 - after your push with
  ```
- git push
+ git add .
+ git commit -m "description of your commit"
+ git push origin main
  ```
