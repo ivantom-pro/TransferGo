@@ -30,9 +30,13 @@ cd TransferGo/src/frontend
 ## How to contribute
 
 - contribute to any of the folder in the directory
-- make a pull request with
+- get all repositori's changes with 
  ```
  git pull origin main
+ ```
+- make a pull request with
+ ```
+ git push
  ```
 - after your push with
  ```
