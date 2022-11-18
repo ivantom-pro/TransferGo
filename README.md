@@ -44,3 +44,4 @@ cd TransferGo/src/frontend
  git commit -m "description of your commit"
  git push origin main
  ```
+- after you create a pull request for it to be merge
