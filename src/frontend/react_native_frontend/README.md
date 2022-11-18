@@ -1,7 +1,7 @@
 # React Native Frontend
 
 ## How to run
-- Make sure you have nodejs install on your machine if not go to [download nodejs](https://www.nodejs.com/download) and download the version corresponding to your operating system
+- Make sure you have nodejs install on your machine if not go to [download nodejs](https://nodejs.org/en/download/) and download the version corresponding to your operating system
 
 - Install the dependencies with
     ```
