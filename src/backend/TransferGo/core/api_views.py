@@ -58,6 +58,7 @@ class AccountViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, Update
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         instance = serializer.save()
+
         return Response(ProfileSerializer(instance).data, status=201)
 
     def update(self, request, *args, **kwargs):
@@ -84,7 +85,7 @@ class TransactionViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, Re
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        queryset = Transaction.objects.filter(sender=self.request.GET.get('user')).order_by('id')
+        queryset = Transaction.objects.filter(sender=self.request.GET.get('account')).order_by('id')
         return queryset
 
     def create(self, request, *args, **kwargs):
