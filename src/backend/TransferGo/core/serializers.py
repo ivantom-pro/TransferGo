@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Transaction,Account,Profile
+from .models import Transaction, Account, Profile
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -10,7 +10,6 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'first_name', 'last_name', 'password']
 
-# Je propose que quand on cree un User on cree un profile et un compte directement
 
 class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
@@ -18,6 +17,10 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = '__all__'
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return Profile.objects.create(**validated_data)
 
 
 class AccountSerializer(serializers.ModelSerializer):
@@ -27,10 +30,18 @@ class AccountSerializer(serializers.ModelSerializer):
         model = Account
         fields = '__all__'
 
+    def create(self, validated_data):
+        validated_data['sender'] = self.context['request'].sender
+        return Account.objects.create(**validated_data)
+
 
 class TransactionSerializer(serializers.ModelSerializer):
     user = UserSerializer()
 
     class Meta:
-        model = Account
+        model = Transaction
         fields = '__all__'
+
+        def create(self, validated_data):
+            validated_data['sender'] = self.context['request'].sender
+            return Transaction.objects.create(**validated_data)
