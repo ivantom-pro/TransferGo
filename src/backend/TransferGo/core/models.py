@@ -35,7 +35,7 @@ class Transaction(models.Model):
     type = models.CharField(max_length=255)
     date = models.DateTimeField(auto_created=True)
     sender = models.OneToOneField(User, on_delete=models.CASCADE, related_name='send')
-    receiver = models.OneToOneField(User, on_delete=models.CASCADE,related_name='receive')
+    receiver = models.OneToOneField(User, on_delete=models.CASCADE, related_name='receive')
 
     def __str__(self):
         return f"transaction of {self.sender.username} to  {self.receiver.username}"
