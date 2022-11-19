@@ -5,7 +5,7 @@
 
 - Install the dependencies with
     ```
-    npm install
+    npm install --save
     ```
 - Install `expo-cli` globaly on your maching using
     ```
