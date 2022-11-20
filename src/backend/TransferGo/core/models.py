@@ -18,13 +18,20 @@ class Profile(models.Model):
 
 
 class Account(models.Model):
+    class Type(models.TextChoices):
+        simple = 'simple', ('simple')
+        commercial = 'commercial', ('commercial')
+
+    class Currency(models.TextChoices):
+        dolar = 'dolar', ('dolar')
+        cfa = 'cfa', ('cfa')
+        euro = 'euro', ('euro')
     balance = models.PositiveBigIntegerField(default=0)
-    currency = models.CharField(max_length=255)
-    statut = models.CharField(max_length=255)
-    type = models.CharField(max_length=255)
+    currency = models.CharField(max_length=255, choices=Currency.choices, default=Currency.cfa)
+    type = models.CharField(max_length=255, choices=Type.choices, default=Type.simple)
     created_at = models.DateTimeField(auto_created=True)
     deleted_at = models.DateTimeField(blank=True, null=True)
-    user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return f"account of {self.user.username}"
@@ -34,8 +41,8 @@ class Transaction(models.Model):
     amount = models.PositiveBigIntegerField()
     type = models.CharField(max_length=255)
     date = models.DateTimeField(auto_created=True)
-    sender = models.OneToOneField(User, on_delete=models.CASCADE, related_name='send')
-    receiver = models.OneToOneField(User, on_delete=models.CASCADE, related_name='receive')
+    sender = models.OneToOneField(Account, on_delete=models.CASCADE, related_name='send')
+    receiver = models.OneToOneField(Account, on_delete=models.CASCADE, related_name='receive')
 
     def __str__(self):
         return f"transaction of {self.sender.username} to  {self.receiver.username}"

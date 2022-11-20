@@ -20,6 +20,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
+        Account.objects.create(user=validated_data['user'])
         return Profile.objects.create(**validated_data)
 
 
@@ -31,12 +32,11 @@ class AccountSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
-        validated_data['sender'] = self.context['request'].sender
+        validated_data['user'] = self.context['request'].user
         return Account.objects.create(**validated_data)
 
 
 class TransactionSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
 
     class Meta:
         model = Transaction
