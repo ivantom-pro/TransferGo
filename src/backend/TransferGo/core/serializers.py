@@ -9,6 +9,49 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'first_name', 'last_name', 'password']
+        extra_kwargs = {
+            'password': {
+                'write_only': True,
+                'required': True,
+            },
+            'first_name': {
+                'required': True,
+            },
+            'last_name': {
+                'required': True,
+            },
+        }
+
+
+class ProfileCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = '__all__'
+        extra_kwargs = {
+            'user': {
+                'required': True,
+            },
+            'pin': {
+                'required': True,
+            },
+            'adress': {
+                'required': True,
+            },
+            'phone': {
+                'required': True,
+            },
+            'birthday': {
+                'required': True,
+            },
+        }
+
+    def create(self, validated_data):
+        user = validated_data.pop('user')
+        serializer = UserSerializer(data=user)
+        serializer.is_valid(raise_exception=True)
+        user_instance = serializer.save()
+        validated_data['user'] = user_instance
+        return Profile.objects.create(**validated_data)
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -17,11 +60,6 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = '__all__'
-
-    def create(self, validated_data):
-        validated_data['user'] = self.context['request'].user
-        Account.objects.create(user=validated_data['user'])
-        return Profile.objects.create(**validated_data)
 
 
 class AccountSerializer(serializers.ModelSerializer):

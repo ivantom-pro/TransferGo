@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.mixins import (CreateModelMixin, DestroyModelMixin, ListModelMixin, UpdateModelMixin,
                                    RetrieveModelMixin)
 from rest_framework.decorators import action
-from .serializers import ProfileSerializer, AccountSerializer, TransactionSerializer
+from .serializers import ProfileSerializer, AccountSerializer, TransactionSerializer, ProfileCreateSerializer
 from .models import Profile, Account, Transaction
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly
 from drf_yasg.utils import swagger_auto_schema
@@ -18,8 +18,14 @@ class ProfileViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, Update
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        queryset = Profile.objects.filter(user=self.request.GET.get('user'))
+        queryset = Profile.objects.filter(user=self.request.user)
         return queryset
+
+    def get_serializer_class(self, *args, **kwargs):
+        if self.request.method.upper() in ['POST', 'PUT', 'PATCH']:
+            return ProfileCreateSerializer
+        else:
+            return ProfileSerializer
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -59,7 +65,7 @@ class AccountViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, Update
         serializer.is_valid(raise_exception=True)
         instance = serializer.save()
 
-        return Response(ProfileSerializer(instance).data, status=201)
+        return Response(AccountSerializer(instance).data, status=201)
 
     def update(self, request, *args, **kwargs):
         instance: Account = self.get_object()
@@ -91,8 +97,31 @@ class TransactionViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, Re
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        instance = serializer.save()
-        return Response(ProfileSerializer(instance).data, status=201)
+        if serializer.type == Transaction.Type.cash_in:
+            # ici on effectue un dépôt
+            if serializer.sender.balance > serializer.amount:
+                serializer.sender.balance -= serializer.amount
+                serializer.receiver.balance += serializer.amount
+                instance = serializer.save()
+            else:
+                instance = serializer.errors
+        elif serializer.type == Transaction.Type.withdraw:
+            # ici on effectue un retrait
+            if serializer.receiver.balance > (serializer.amount + 0.02*serializer.amount):
+                serializer.receiver.balance -= serializer.amount + 0.02*serializer.amount
+                serializer.sender.balance += serializer.amount
+                instance = serializer.save()
+            else:
+                instance = serializer.errors
+        else:
+            # ici on effectues une transaction
+            if serializer.sender.balance > (serializer.amount + 0.1*serializer.amount):
+                serializer.sender.balance -= serializer.amount + 0.1*serializer.amount
+                serializer.receiver.balance += serializer.amount
+                instance = serializer.save()
+            else:
+                instance = serializer.errors
+        return Response(TransactionSerializer(instance).data, status=201)
 
     def destroy(self, request, *args, **kwargs):
         instance: Transaction = self.get_object()
