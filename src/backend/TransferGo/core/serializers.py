@@ -46,11 +46,7 @@ class ProfileCreateSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
-        user = validated_data.pop('user')
-        serializer = UserSerializer(data=user)
-        serializer.is_valid(raise_exception=True)
-        user_instance = serializer.save()
-        validated_data['user'] = user_instance
+        validated_data['user'] = self.context['request'].user
         return Profile.objects.create(**validated_data)
 
 
