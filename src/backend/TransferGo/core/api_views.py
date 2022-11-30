@@ -16,6 +16,12 @@ User = get_user_model()
 
 
 class LoginViewSet(GenericViewSet):
+
+    @swagger_auto_schema(
+        request_body=LoginSerializer(),
+        operation_description="passer le username et le password et le password doit avoir au moins 8 "
+                              "charactères")
+    @action(methods=['POST'], detail=True)
     def sing_in(self):
         serializer = LoginSerializer(data=self.request.data)
         serializer.is_valid(raise_exception=True)
@@ -30,11 +36,15 @@ class LoginViewSet(GenericViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UpdatePasswordViewSet(UpdateModelMixin, GenericViewSet):
+class UpdatePasswordViewSet(GenericViewSet):
     serializer_class = PasswordSerializer
     permission_classes = [IsAuthenticated]
 
-    def create(self, request, *args, **kwargs):
+    @swagger_auto_schema(
+        request_body=PasswordSerializer(),
+        operation_description="passer l'ancien et  le nouveau mot de passe ")
+    @action(methods=['POST'], detail=True)
+    def set_update(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -144,31 +154,38 @@ class TransactionViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, Re
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        if serializer.type == Transaction.Type.cash_in:
+
+        sender = serializer.validated_data('sender')
+        receiver = serializer.validated_data('receiver')
+        amount = serializer.validated_data('amount')
+        type = serializer.validated_data('type')
+
+        if type == Transaction.Type.cash_in:
             # ici on effectue un dépôt
-            if serializer.sender.balance > serializer.amount:
-                serializer.sender.balance -= serializer.amount
-                serializer.receiver.balance += serializer.amount
+            if sender.balance > amount:
+                sender.balance -= amount
+                receiver.balance += amount
                 instance = serializer.save()
             else:
-                instance = serializer.errors
-        elif serializer.type == Transaction.Type.withdraw:
+                return Response({'detail':'your balance is insufficient to complete this transaction'})
+        elif type == Transaction.Type.withdraw:
             # ici on effectue un retrait
-            if serializer.receiver.balance > (serializer.amount + 0.02*serializer.amount):
+            """if serializer.receiver.balance > (serializer.amount + 0.02*serializer.amount):
                 serializer.receiver.balance -= serializer.amount + 0.02*serializer.amount
                 serializer.sender.balance += serializer.amount
                 instance = serializer.save()
             else:
-                instance = serializer.errors
+                instance = serializer.errors"""
+            pass
         else:
-            # ici on effectues une transaction
-            if serializer.sender.balance > (serializer.amount + 0.1*serializer.amount):
-                serializer.sender.balance -= serializer.amount + 0.1*serializer.amount
-                serializer.receiver.balance += serializer.amount
+            # ici on effectue une transaction
+            if sender.balance > (amount + 0.1*amount):
+                sender.balance -= amount + 0.1*amount
+                receiver.balance += amount
                 instance = serializer.save()
             else:
                 instance = serializer.errors
-        return Response(TransactionSerializer(instance).data, status=201)
+            return Response(TransactionSerializer(instance).data, status=201)
 
     def destroy(self, request, *args, **kwargs):
         instance: Transaction = self.get_object()
