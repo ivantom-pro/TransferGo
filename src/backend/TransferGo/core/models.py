@@ -2,18 +2,19 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
 
 User = get_user_model()
 
 
 class Profile(models.Model):
-    pin = models.PositiveIntegerField(default=1234)
-    adress = models.CharField(max_length=255)
     phone = models.IntegerField()
+    birthday = models.DateField()
+    adress = models.CharField(max_length=155)
+    pin = models.PositiveIntegerField(default=1234)
     created_at = models.DateTimeField(auto_now_add=True )
     deleted_at = models.DateTimeField(blank=True,null=True)
     user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True)
-    birthday = models.DateField()
 
     def __str__(self):
         return f"profile of {self.user.username}"
@@ -48,7 +49,9 @@ class Account(models.Model):
 @receiver(post_save, sender=User)
 def createAccount(sender, instance, **kwargs):
     if instance.id is not None:
-        Account.objects.create(user=instance)
+        if not Account.objects.filter(user=instance):
+            Account.objects.create(user=instance)
+            Token.objects.create(user=instance)
 
 
 class Transaction(models.Model):
