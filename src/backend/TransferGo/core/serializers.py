@@ -100,12 +100,28 @@ class AccountSerializer(serializers.ModelSerializer):
         return Account.objects.create(**validated_data)
 
 
+class TransactionCreateserializer(serializers.ModelSerializer):
+    number = serializers.CharField(max_length=155)
+
+    class Meta:
+        model = Transaction
+        fields = ('amount', 'type', 'number', 'sender', 'receiver')
+        extra_kwargs = {
+            'sender': {
+                'read_only': True,
+            },
+            'receiver': {
+                'read_only': True,
+            }
+        }
+
+        def create(self, validated_data):
+            validated_data['sender'] = self.context['request'].sender
+            return Transaction.objects.create(**validated_data)
+
+
 class TransactionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
         fields = '__all__'
-
-        def create(self, validated_data):
-            validated_data['sender'] = self.context['request'].sender
-            return Transaction.objects.create(**validated_data)
