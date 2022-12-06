@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.mixins import (CreateModelMixin, DestroyModelMixin, ListModelMixin, UpdateModelMixin,
                                    RetrieveModelMixin)
 from rest_framework.decorators import action
-from .serializers import ProfileSerializer, AccountSerializer, TransactionSerializer, ProfileCreateSerializer, PasswordSerializer, LoginSerializer, UserSerializer
+from .serializers import ProfileSerializer, AccountSerializer, TransactionSerializer, ProfileCreateSerializer, PasswordSerializer, LoginSerializer, UserSerializer,TransactionCreateserializer
 from .models import Profile, Account, Transaction
 from rest_framework.permissions import IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
@@ -48,9 +48,9 @@ class UpdatePasswordViewSet(GenericViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        old_password = serializer.validated_data.get('old_password')
-        new_password = serializer.validated_data.get('new_password')
-        confirm_password = serializer.validated_data.get('confirm_password')
+        old_password = serializer.validated_data.get['old_password']
+        new_password = serializer.validated_data.get['new_password']
+        confirm_password = serializer.validated_data.get['confirm_password']
 
         user = request.user
         if not user.check_password(old_password):
@@ -114,8 +114,9 @@ class AccountViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, Update
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        queryset = Account.objects.get(user=self.request.GET.get('user'))
+        queryset = Account.objects.filter(user=self.request.user)
         return queryset
+
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -148,24 +149,43 @@ class TransactionViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, Re
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        queryset = Transaction.objects.filter(sender=self.request.GET.get('account')).order_by('id')
+        queryset = Transaction.objects.filter(sender=self.request.user.account).order_by('id')
         return queryset
+
+    def get_serializer_class(self, *args, **kwargs):
+        if self.request.method.upper() in ['POST', 'PUT', 'PATCH']:
+            return TransactionCreateserializer
+        else:
+            return TransactionSerializer
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        sender = serializer.validated_data('sender')
-        receiver = serializer.validated_data('receiver')
-        amount = serializer.validated_data('amount')
-        type = serializer.validated_data('type')
+        amount = serializer.validated_data['amount']
+        type = serializer.validated_data['type']
+        number = serializer.validated_data.pop('number')
 
-        if type == Transaction.Type.cash_in:
+        sender = self.request.user.account
+        profile = Profile.objects.filter(phone=number).first()
+        if profile is None:
+            return Response({'detail':'this number doesn\'t match with no one of our users'})
+
+        serializer.validated_data['sender'] = sender
+        receiver = profile.user.account
+        serializer.validated_data['receiver'] = receiver
+
+        print(sender.balance)
+
+        if type is Transaction.Type.cash_in:
             # ici on effectue un dépôt
             if sender.balance > amount:
                 sender.balance -= amount
+                sender.save()
                 receiver.balance += amount
+                receiver.save()
                 instance = serializer.save()
+                return Response(TransactionSerializer(instance).data, status=201)
             else:
                 return Response({'detail':'your balance is insufficient to complete this transaction'})
         elif type == Transaction.Type.withdraw:
@@ -181,11 +201,13 @@ class TransactionViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, Re
             # ici on effectue une transaction
             if sender.balance > (amount + 0.1*amount):
                 sender.balance -= amount + 0.1*amount
+                sender.save()
                 receiver.balance += amount
+                receiver.save()
                 instance = serializer.save()
+                return Response(TransactionSerializer(instance).data, status=201)
             else:
-                instance = serializer.errors
-            return Response(TransactionSerializer(instance).data, status=201)
+                return Response({'detail': 'your balance is insufficient to complete this transaction'})
 
     def destroy(self, request, *args, **kwargs):
         instance: Transaction = self.get_object()

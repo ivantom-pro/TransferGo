@@ -14,7 +14,7 @@ class Profile(models.Model):
     pin = models.PositiveIntegerField(default=1234)
     created_at = models.DateTimeField(auto_now_add=True )
     deleted_at = models.DateTimeField(blank=True,null=True)
-    user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True)
+    user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, related_name='profile')
 
     def __str__(self):
         return f"profile of {self.user.username}"
@@ -34,7 +34,7 @@ class Account(models.Model):
     type = models.CharField(max_length=255, choices=Type.choices, default=Type.simple)
     created_at = models.DateTimeField(auto_now_add=True)
     deleted_at = models.DateTimeField(blank=True, null=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, related_name='account')
 
     def __str__(self):
         return f"account of {self.user.username}"
@@ -62,9 +62,9 @@ class Transaction(models.Model):
 
     amount = models.PositiveBigIntegerField()
     type = models.CharField(max_length=155, choices=Type.choices, default=Type.transfert)
-    date = models.DateTimeField(auto_created=True)
-    sender = models.OneToOneField(Account, on_delete=models.CASCADE, related_name='send')
-    receiver = models.OneToOneField(Account, on_delete=models.CASCADE, related_name='receive')
+    date = models.DateTimeField(auto_now_add=True)
+    sender = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='sender')
+    receiver = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='receiver')
 
     def __str__(self):
-        return f"transaction of {self.sender.username} to  {self.receiver.username}"
+        return f"transaction of {self.sender.user.username} to  {self.receiver.user.username}"
