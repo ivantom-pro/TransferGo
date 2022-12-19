@@ -5,7 +5,7 @@ from rest_framework.mixins import (CreateModelMixin, DestroyModelMixin, ListMode
 from rest_framework.decorators import action
 from .serializers import ProfileSerializer, AccountSerializer, TransactionSerializer, ProfileCreateSerializer, PasswordSerializer, LoginSerializer, UserSerializer,TransactionCreateserializer
 from .models import Profile, Account, Transaction
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from drf_yasg.utils import swagger_auto_schema
 from django.utils.decorators import method_decorator
 from django.contrib.auth import get_user_model, authenticate, logout
@@ -15,52 +15,49 @@ from rest_framework.authtoken.models import Token
 User = get_user_model()
 
 
-class LoginViewSet(GenericViewSet):
+class LoginViewSet(CreateModelMixin,GenericViewSet):
+    serializer_class = LoginSerializer
+    permission_classes = [AllowAny]
 
-    @swagger_auto_schema(
-        request_body=LoginSerializer(),
-        operation_description="passer le username et le password et le password doit avoir au moins 8 "
-                              "charactères")
-    @action(methods=['POST'], detail=True)
-    def sing_in(self):
-        serializer = LoginSerializer(data=self.request.data)
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=self.request.data)
         serializer.is_valid(raise_exception=True)
         username = serializer.validated_data.get('username')
         password = serializer.validated_data.get('password')
         user = authenticate(username=username, password=password)
         if user is not None:
-            token = Token.objects.get_or_create(user=user).first()
-            print(f"token {token.key}")
-            return Response(UserSerializer(user).data)
+            token = user.auth_token.key
+            print(f"token {token}")
+            context = {
+                'user': UserSerializer(user).data,
+                'Token': token,
+            }
+            return Response(context)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'username or password invalid'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UpdatePasswordViewSet(GenericViewSet):
+class UpdatePasswordViewSet(CreateModelMixin,GenericViewSet):
     serializer_class = PasswordSerializer
     permission_classes = [IsAuthenticated]
 
-    @swagger_auto_schema(
-        request_body=PasswordSerializer(),
-        operation_description="passer l'ancien et  le nouveau mot de passe ")
-    @action(methods=['POST'], detail=True)
-    def set_update(self, request, *args, **kwargs):
+    def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        old_password = serializer.validated_data.get['old_password']
-        new_password = serializer.validated_data.get['new_password']
-        confirm_password = serializer.validated_data.get['confirm_password']
+        old_password = serializer.validated_data.get('old_password')
+        new_password = serializer.validated_data.get('new_password')
+        confirm_password = serializer.validated_data.get('confirm_password')
 
-        user = request.user
+        user = self.request.user
         if not user.check_password(old_password):
-            return Response({'detail': 'the old password don\'t match'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'the old password does not match'}, status=status.HTTP_400_BAD_REQUEST)
 
         if len(new_password) < 8:
-                return Response({'detail': 'password is too short; require at least 8 characters'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'password is too short; require at least 8 characters'}, status=status.HTTP_400_BAD_REQUEST)
 
         if new_password != confirm_password:
-            return Response({'detail': 'password don\'t match'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'confirm password does not match with the new one'}, status=status.HTTP_400_BAD_REQUEST)
 
         user.set_password(new_password)
         user.save()
@@ -72,10 +69,10 @@ class UpdatePasswordViewSet(GenericViewSet):
 ), 'create')
 class ProfileViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, UpdateModelMixin, RetrieveModelMixin, GenericViewSet):
     serializer_class = ProfileSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
-        queryset = Profile.objects.filter(user=self.request.user)
+        queryset = Profile.objects.filter(user=self.request.user.id)
         return queryset
 
     def get_serializer_class(self, *args, **kwargs):
@@ -94,16 +91,19 @@ class ProfileViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, Update
         instance: Profile = self.get_object()
         if instance.user == self.request.user:
             return super().update(request, *args, **kwargs)
+        return Response({'detail': 'you are nor allow to update this profile'})
 
     def partial_update(self, request, *args, **kwargs):
         instance: Profile = self.get_object()
         if instance.user == self.request.user:
             return super().partial_update(request, *args, **kwargs)
+        return Response({'detail': 'you are nor allow to update this profile'})
 
     def destroy(self, request, *args, **kwargs):
         instance: Profile = self.get_object()
         if instance.user == self.request.user:
             return super().destroy(request, *args, **kwargs)
+        return Response({'detail': 'you are nor allow to destroy this profile'})
 
 
 @method_decorator(swagger_auto_schema(
@@ -116,7 +116,6 @@ class AccountViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, Update
     def get_queryset(self):
         queryset = Account.objects.filter(user=self.request.user)
         return queryset
-
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -149,7 +148,7 @@ class TransactionViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, Re
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        queryset = Transaction.objects.filter(sender=self.request.user.account).order_by('id')
+        queryset = Transaction.objects.filter(sender=self.request.user.account).order_by('-id')
         return queryset
 
     def get_serializer_class(self, *args, **kwargs):
@@ -169,7 +168,7 @@ class TransactionViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, Re
         sender = self.request.user.account
         profile = Profile.objects.filter(phone=number).first()
         if profile is None:
-            return Response({'detail':'this number doesn\'t match with no one of our users'})
+            return Response({'detail': 'this number does not match with no one of our users'})
 
         serializer.validated_data['sender'] = sender
         receiver = profile.user.account
@@ -187,7 +186,7 @@ class TransactionViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, Re
                 instance = serializer.save()
                 return Response(TransactionSerializer(instance).data, status=201)
             else:
-                return Response({'detail':'your balance is insufficient to complete this transaction'})
+                return Response({'detail': 'your balance is insufficient to complete this transaction'})
         elif type == Transaction.Type.withdraw:
             # ici on effectue un retrait
             """if serializer.receiver.balance > (serializer.amount + 0.02*serializer.amount):
