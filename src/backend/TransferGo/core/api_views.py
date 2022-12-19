@@ -5,7 +5,7 @@ from rest_framework.mixins import (CreateModelMixin, DestroyModelMixin, ListMode
 from rest_framework.decorators import action
 from .serializers import ProfileSerializer, AccountSerializer, TransactionSerializer, ProfileCreateSerializer, PasswordSerializer, LoginSerializer, UserSerializer,TransactionCreateserializer
 from .models import Profile, Account, Transaction
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from drf_yasg.utils import swagger_auto_schema
 from django.utils.decorators import method_decorator
 from django.contrib.auth import get_user_model, authenticate, logout
@@ -72,7 +72,7 @@ class UpdatePasswordViewSet(GenericViewSet):
 ), 'create')
 class ProfileViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, UpdateModelMixin, RetrieveModelMixin, GenericViewSet):
     serializer_class = ProfileSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         queryset = Profile.objects.filter(user=self.request.user)
@@ -94,16 +94,19 @@ class ProfileViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, Update
         instance: Profile = self.get_object()
         if instance.user == self.request.user:
             return super().update(request, *args, **kwargs)
+        return Response({'details': 'you are nor alow to update this profile'})
 
     def partial_update(self, request, *args, **kwargs):
         instance: Profile = self.get_object()
         if instance.user == self.request.user:
             return super().partial_update(request, *args, **kwargs)
+        return Response({'details': 'you are nor alow to update this profile'})
 
     def destroy(self, request, *args, **kwargs):
         instance: Profile = self.get_object()
         if instance.user == self.request.user:
             return super().destroy(request, *args, **kwargs)
+        return Response({'details': 'you are nor alow to destroy this profile'})
 
 
 @method_decorator(swagger_auto_schema(
@@ -116,7 +119,6 @@ class AccountViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, Update
     def get_queryset(self):
         queryset = Account.objects.filter(user=self.request.user)
         return queryset
-
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -149,7 +151,7 @@ class TransactionViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, Re
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        queryset = Transaction.objects.filter(sender=self.request.user.account).order_by('id')
+        queryset = Transaction.objects.filter(sender=self.request.user.account).order_by('-id')
         return queryset
 
     def get_serializer_class(self, *args, **kwargs):
