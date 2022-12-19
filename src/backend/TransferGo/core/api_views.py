@@ -94,19 +94,19 @@ class ProfileViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, Update
         instance: Profile = self.get_object()
         if instance.user == self.request.user:
             return super().update(request, *args, **kwargs)
-        return Response({'details': 'you are nor alow to update this profile'})
+        return Response({'details': 'you are nor allow to update this profile'})
 
     def partial_update(self, request, *args, **kwargs):
         instance: Profile = self.get_object()
         if instance.user == self.request.user:
             return super().partial_update(request, *args, **kwargs)
-        return Response({'details': 'you are nor alow to update this profile'})
+        return Response({'details': 'you are nor allow to update this profile'})
 
     def destroy(self, request, *args, **kwargs):
         instance: Profile = self.get_object()
         if instance.user == self.request.user:
             return super().destroy(request, *args, **kwargs)
-        return Response({'details': 'you are nor alow to destroy this profile'})
+        return Response({'details': 'you are nor allow to destroy this profile'})
 
 
 @method_decorator(swagger_auto_schema(
