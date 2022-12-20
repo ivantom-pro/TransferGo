@@ -3,10 +3,10 @@ import { View, Text } from "react-native";
 import Header from "../components/Header";
 
 
-const SettingScreen = () => {
+const SettingScreen = ({navigation}) => {
     return (
         <View>
-            <Header label={"Settings"} />
+            <Header label={"Settings"} onPress={() => navigation.openDrawer()} />
         </View>
     )
 }

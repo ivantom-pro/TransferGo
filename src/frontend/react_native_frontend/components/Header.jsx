@@ -2,13 +2,13 @@ import { View,Text, TouchableOpacity, StyleSheet } from "react-native";
 import React from "react";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
-export default function CustomButton({label, onPress}) {
+export default function Header({label, onPress}) {
     return (
         <View>
             <View style={styles.head}>
                 <Text style={styles.text}>{label}</Text>
 
-                <TouchableOpacity onPress={() => {}}>
+                <TouchableOpacity onPress={onPress}>
                     <MaterialIcons name="menu" size={30} color="#fff" />
                 </TouchableOpacity>            
             </View>
@@ -19,7 +19,8 @@ export default function CustomButton({label, onPress}) {
 const styles = StyleSheet.create({
     text: {
         flex: 1,
-        color: '#fff'
+        color: '#fff',
+        fontSize: 24,
     },
     head: {
         alignItems: "center",

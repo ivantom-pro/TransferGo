@@ -1,5 +1,5 @@
 import { setStatusBarStyle, StatusBar } from "expo-status-bar";
-import React from "react";
+import React, { useState } from "react";
 import { Platform, NativeModules } from 'react-native';
 import  { StyleSheet, Text, View, TextInput, TouchableOpacity, Button, SafeAreaView} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -52,7 +52,7 @@ const LoginScreen = ({navigation}) => {
               fieldButtonfunction={() => {}}
             />
 
-            <CustomButton label={"Login"} onPress={() => {}}/>
+            <CustomButton label={"Login"} onPress={() => navigation.navigate('Profile')}/>
 
             <View style={{flexDirection: 'row', justifyContent: 'center', marginBottom: 30}}>
               <Text>New to the app?</Text>

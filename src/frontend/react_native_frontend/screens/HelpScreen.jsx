@@ -3,10 +3,10 @@ import { View, Text } from "react-native";
 import Header from "../components/Header";
 
 
-const HelpScreen = () => {
+const HelpScreen = ({navigation}) => {
     return (
         <View>
-            <Header label={"Help"} />
+            <Header label={"Help"} onPress={() => navigation.openDrawer()}/>
         </View>
     )
 }
