@@ -90,7 +90,6 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class AccountSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
 
     class Meta:
         model = Account

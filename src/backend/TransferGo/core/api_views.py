@@ -5,7 +5,7 @@ from rest_framework.mixins import (CreateModelMixin, DestroyModelMixin, ListMode
 from rest_framework.decorators import action
 from .serializers import ProfileSerializer, AccountSerializer, TransactionSerializer, ProfileCreateSerializer, PasswordSerializer, LoginSerializer, UserSerializer,TransactionCreateserializer
 from .models import Profile, Account, Transaction
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny,IsAuthenticatedOrReadOnly
 from drf_yasg.utils import swagger_auto_schema
 from django.utils.decorators import method_decorator
 from django.contrib.auth import get_user_model, authenticate, logout
@@ -29,14 +29,13 @@ class LoginViewSet(CreateModelMixin,GenericViewSet):
         profil = user.profile
         if user is not None:
             token = user.auth_token.key
-            print(f"token {token}")
             context = {
                 'profile': ProfileSerializer(profil).data,
                 'Token': token,
             }
-            return JsonResponse(context)
+            return Response(context)
         else:
-            return JsonResponse({'detail': 'username or password invalid'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'username or password invalid'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UpdatePasswordViewSet(CreateModelMixin,GenericViewSet):
@@ -69,15 +68,19 @@ class UpdatePasswordViewSet(CreateModelMixin,GenericViewSet):
 @method_decorator(swagger_auto_schema(
     request_body=ProfileSerializer()
 ), 'create')
-class ProfileViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, UpdateModelMixin, RetrieveModelMixin, GenericViewSet):
+class ProfileViewSet(CreateModelMixin, ListModelMixin, UpdateModelMixin, RetrieveModelMixin, GenericViewSet):
     serializer_class = ProfileSerializer
     permission_classes = [AllowAny]
 
-    def get_queryset(self):
+    def get_user(self):
         user = self.request.user
-        """if not user:
-            token = Token.objects.get(key=self.request.token)
-            user = token.user"""
+        if not user.is_authenticated:
+            token = Token.objects.get(key=self.request.headers['Token'])
+            user = token.user
+        return user
+
+    def get_queryset(self):
+        user = self.get_user()
         queryset = Profile.objects.filter(user=user.id)
         return queryset
 
@@ -91,25 +94,21 @@ class ProfileViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, Update
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         instance = serializer.save()
-        return JsonResponse(ProfileSerializer(instance).data, status=201)
+        return Response(ProfileSerializer(instance).data, status=201)
 
     def update(self, request, *args, **kwargs):
         instance: Profile = self.get_object()
-        if instance.user == self.request.user:
+        user = self.get_user()
+        if instance.user == user:
             return super().update(request, *args, **kwargs)
         return JsonResponse({'detail': 'you are nor allow to update this profile'})
 
     def partial_update(self, request, *args, **kwargs):
         instance: Profile = self.get_object()
-        if instance.user == self.request.user:
+        user = self.get_user()
+        if instance.user == user:
             return super().partial_update(request, *args, **kwargs)
         return Response({'detail': 'you are nor allow to update this profile'})
-
-    def destroy(self, request, *args, **kwargs):
-        instance: Profile = self.get_object()
-        if instance.user == self.request.user:
-            return super().destroy(request, *args, **kwargs)
-        return Response({'detail': 'you are nor allow to destroy this profile'})
 
 
 @method_decorator(swagger_auto_schema(
@@ -117,10 +116,18 @@ class ProfileViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, Update
 ), 'create')
 class AccountViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, UpdateModelMixin, RetrieveModelMixin, GenericViewSet):
     serializer_class = AccountSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_user(self):
+        user = self.request.user
+        if not user.is_authenticated:
+            token = Token.objects.get(key=self.request.headers['Token'])
+            user = token.user
+        return user
 
     def get_queryset(self):
-        queryset = Account.objects.filter(user=self.request.user)
+        user = self.get_user()
+        queryset = Account.objects.filter(user=user.id)
         return queryset
 
     def create(self, request, *args, **kwargs):
@@ -130,31 +137,24 @@ class AccountViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, Update
 
         return Response(AccountSerializer(instance).data, status=201)
 
-    def update(self, request, *args, **kwargs):
-        instance: Account = self.get_object()
-        if instance.user == self.request.user:
-            return super().update(request, *args, **kwargs)
-
-    def partial_update(self, request, *args, **kwargs):
-        instance: Account = self.get_object()
-        if instance.user == self.request.user:
-            return super().partial_update(request, *args, **kwargs)
-
-    def destroy(self, request, *args, **kwargs):
-        instance: Account = self.get_object()
-        if instance.user == self.request.user:
-            return super().destroy(request, *args, **kwargs)
-
 
 @method_decorator(swagger_auto_schema(
     request_body=TransactionSerializer()
 ), 'create')
 class TransactionViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, RetrieveModelMixin, GenericViewSet):
     serializer_class = TransactionSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_user(self):
+        user = self.request.user
+        if not user.is_authenticated:
+            token = Token.objects.get(key=self.request.headers['Token'])
+            user = token.user
+        return user
 
     def get_queryset(self):
-        queryset = Transaction.objects.filter(sender=self.request.user.account).order_by('-id')
+        user = self.get_user()
+        queryset = Transaction.objects.filter(sender=user.account).order_by('-id')
         return queryset
 
     def get_serializer_class(self, *args, **kwargs):
@@ -214,7 +214,3 @@ class TransactionViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, Re
             else:
                 return Response({'detail': 'your balance is insufficient to complete this transaction'})
 
-    def destroy(self, request, *args, **kwargs):
-        instance: Transaction = self.get_object()
-        if instance.user == self.request.user:
-            return super().destroy(request, *args, **kwargs)
