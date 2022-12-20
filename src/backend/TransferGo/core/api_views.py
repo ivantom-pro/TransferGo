@@ -40,7 +40,7 @@ class LoginViewSet(CreateModelMixin,GenericViewSet):
 
 class UpdatePasswordViewSet(CreateModelMixin,GenericViewSet):
     serializer_class = PasswordSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -116,7 +116,7 @@ class ProfileViewSet(CreateModelMixin, ListModelMixin, UpdateModelMixin, Retriev
 ), 'create')
 class AccountViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, UpdateModelMixin, RetrieveModelMixin, GenericViewSet):
     serializer_class = AccountSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [AllowAny]
 
     def get_user(self):
         user = self.request.user
@@ -143,7 +143,7 @@ class AccountViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, Update
 ), 'create')
 class TransactionViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, RetrieveModelMixin, GenericViewSet):
     serializer_class = TransactionSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [AllowAny]
 
     def get_user(self):
         user = self.request.user
