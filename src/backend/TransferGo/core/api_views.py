@@ -10,6 +10,7 @@ from drf_yasg.utils import swagger_auto_schema
 from django.utils.decorators import method_decorator
 from django.contrib.auth import get_user_model, authenticate, logout
 from rest_framework import status
+from django.http import JsonResponse, request
 from rest_framework.authtoken.models import Token
 
 User = get_user_model()
@@ -25,16 +26,17 @@ class LoginViewSet(CreateModelMixin,GenericViewSet):
         username = serializer.validated_data.get('username')
         password = serializer.validated_data.get('password')
         user = authenticate(username=username, password=password)
+        profil = user.profile
         if user is not None:
             token = user.auth_token.key
             print(f"token {token}")
             context = {
-                'user': UserSerializer(user).data,
+                'profile': ProfileSerializer(profil).data,
                 'Token': token,
             }
-            return Response(context)
+            return JsonResponse(context)
         else:
-            return Response({'detail': 'username or password invalid'}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({'detail': 'username or password invalid'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UpdatePasswordViewSet(CreateModelMixin,GenericViewSet):
@@ -51,17 +53,17 @@ class UpdatePasswordViewSet(CreateModelMixin,GenericViewSet):
 
         user = self.request.user
         if not user.check_password(old_password):
-            return Response({'detail': 'the old password does not match'}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({'detail': 'the old password does not match'}, status=status.HTTP_400_BAD_REQUEST)
 
         if len(new_password) < 8:
-            return Response({'detail': 'password is too short; require at least 8 characters'}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({'detail': 'password is too short; require at least 8 characters'}, status=status.HTTP_400_BAD_REQUEST)
 
         if new_password != confirm_password:
-            return Response({'detail': 'confirm password does not match with the new one'}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({'detail': 'confirm password does not match with the new one'}, status=status.HTTP_400_BAD_REQUEST)
 
         user.set_password(new_password)
         user.save()
-        return Response({'detail': 'password successfully updated'})
+        return JsonResponse({'detail': 'password successfully updated'})
 
 
 @method_decorator(swagger_auto_schema(
@@ -72,7 +74,11 @@ class ProfileViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, Update
     permission_classes = [AllowAny]
 
     def get_queryset(self):
-        queryset = Profile.objects.filter(user=self.request.user.id)
+        user = self.request.user
+        """if not user:
+            token = Token.objects.get(key=self.request.token)
+            user = token.user"""
+        queryset = Profile.objects.filter(user=user.id)
         return queryset
 
     def get_serializer_class(self, *args, **kwargs):
@@ -85,13 +91,13 @@ class ProfileViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, Update
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         instance = serializer.save()
-        return Response(ProfileSerializer(instance).data, status=201)
+        return JsonResponse(ProfileSerializer(instance).data, status=201)
 
     def update(self, request, *args, **kwargs):
         instance: Profile = self.get_object()
         if instance.user == self.request.user:
             return super().update(request, *args, **kwargs)
-        return Response({'detail': 'you are nor allow to update this profile'})
+        return JsonResponse({'detail': 'you are nor allow to update this profile'})
 
     def partial_update(self, request, *args, **kwargs):
         instance: Profile = self.get_object()

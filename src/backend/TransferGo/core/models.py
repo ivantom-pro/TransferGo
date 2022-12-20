@@ -3,6 +3,8 @@ from django.contrib.auth import get_user_model
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
+from django.core.exceptions import ValidationError
+
 
 User = get_user_model()
 
@@ -46,6 +48,7 @@ class Account(models.Model):
             return False
 
 
+
 @receiver(post_save, sender=User)
 def createAccount(sender, instance, **kwargs):
     if instance.id is not None:
@@ -68,3 +71,20 @@ class Transaction(models.Model):
 
     def __str__(self):
         return f"transaction of {self.sender.user.username} to  {self.receiver.user.username}"
+
+    def clean_fields(self, exclude=None):
+        super().clean_fields(exclude)
+        if self.sender == self.reciever:
+            raise ValidationError(_("You Can't Transfer Money To Your Self"))
+
+        if self.amount > self.sender.balance:
+            raise ValidationError({
+                "sender": _(
+                    "This account is not able to transfer money because the account balance is insufficient! {} > {}".format(
+                        self.amount, self.sender.balance))
+            })
+        if not self.sender.is_commercial():
+            raise ValidationError({
+                "sender": _("your are not allow to done a transaction you heve a simple account ")
+            })
+
