@@ -12,7 +12,7 @@ class Tests(APITestCase, URLPatternsTestCase):
 
     def test_get_account(self):
         
-        self.client.credentials(HTTP_AUTHORIZATION=f"token {token}")
+        """self.client.credentials(HTTP_AUTHORIZATION=f"token {token}")"""
         response = self.client.get('account/', format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
