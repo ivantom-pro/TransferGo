@@ -87,6 +87,12 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = '__all__'
+        extra_kwargs = {
+            'pin': {
+                'write_only': True,
+            }
+
+        }
 
 
 class AccountSerializer(serializers.ModelSerializer):
@@ -112,7 +118,8 @@ class TransactionCreateserializer(serializers.ModelSerializer):
             },
             'receiver': {
                 'read_only': True,
-            }
+            },
+
         }
 
         def create(self, validated_data):

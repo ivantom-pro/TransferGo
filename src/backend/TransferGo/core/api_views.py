@@ -40,7 +40,7 @@ class LoginViewSet(CreateModelMixin,GenericViewSet):
 
 class UpdatePasswordViewSet(CreateModelMixin,GenericViewSet):
     serializer_class = PasswordSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -70,17 +70,11 @@ class UpdatePasswordViewSet(CreateModelMixin,GenericViewSet):
 ), 'create')
 class ProfileViewSet(CreateModelMixin, ListModelMixin, UpdateModelMixin, RetrieveModelMixin, GenericViewSet):
     serializer_class = ProfileSerializer
-    permission_classes = [AllowAny]
-
-    def get_user(self):
-        user = self.request.user
-        if not user.is_authenticated:
-            token = Token.objects.get(key=self.request.headers['Token'])
-            user = token.user
-        return user
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
-        user = self.get_user()
+        user = self.request.user
+        print(user)
         queryset = Profile.objects.filter(user=user.id)
         return queryset
 
@@ -116,17 +110,10 @@ class ProfileViewSet(CreateModelMixin, ListModelMixin, UpdateModelMixin, Retriev
 ), 'create')
 class AccountViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, UpdateModelMixin, RetrieveModelMixin, GenericViewSet):
     serializer_class = AccountSerializer
-    permission_classes = [AllowAny]
-
-    def get_user(self):
-        user = self.request.user
-        if not user.is_authenticated:
-            token = Token.objects.get(key=self.request.headers['Token'])
-            user = token.user
-        return user
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
-        user = self.get_user()
+        user = self.request.user
         queryset = Account.objects.filter(user=user.id)
         return queryset
 
@@ -139,21 +126,14 @@ class AccountViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, Update
 
 
 @method_decorator(swagger_auto_schema(
-    request_body=TransactionSerializer()
+    request_body=TransactionCreateserializer()
 ), 'create')
 class TransactionViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, RetrieveModelMixin, GenericViewSet):
     serializer_class = TransactionSerializer
-    permission_classes = [AllowAny]
-
-    def get_user(self):
-        user = self.request.user
-        if not user.is_authenticated:
-            token = Token.objects.get(key=self.request.headers['Token'])
-            user = token.user
-        return user
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
-        user = self.get_user()
+        user = self.request.user
         queryset = Transaction.objects.filter(sender=user.account).order_by('-id')
         return queryset
 
