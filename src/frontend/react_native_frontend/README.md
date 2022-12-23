@@ -17,4 +17,5 @@
     ```
 - Go to playstore an download the expo client app
 
-- scan the QRCode in the console with the expo client app and the result will be display in the app!
+
+- scan the QRCode in the console with the expo client app and the result will be display in the app

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+<<<<<<< HEAD
   <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.10 (.env) (3)" project-jdk-type="Python SDK" />
   <component name="PyCharmProfessionalAdvertiser">
     <option name="shown" value="true" />
@@ -7,4 +8,7 @@
   <component name="UnicodeBrowser">
     <option name="fontName" value="JetBrains Mono" />
   </component>
+=======
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+>>>>>>> 8852c1b429e14c72f9147c51ad43a6f3338e0685
 </project>
