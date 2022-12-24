@@ -14,6 +14,11 @@ fetch("http://127.0.0.1:8000/api/auth/sing_in/", {
 .then(function(data){
     console.log(data)
     console.log(data.Token)
+
+    
 })
 .catch(error => console.log(error))
+
+document.getElementById("name").innerHTML = "terb";
+document.getElementById("email").innerHTML = "teyou";
 
