@@ -1,7 +1,3 @@
-import { StatusBar } from "expo-status-bar";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { SafeAreaView, Platform } from "react-native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import 'react-native-gesture-handler';
@@ -25,8 +21,6 @@ export default function App() {
           justifyContent: 'center',
           paddingTop: Platform.OS === 'android' ? StatusBarManager.HEIGHT :0, }}
         >
-      <StatusBar barStyle="default" />
-
       <Drawer.Navigator drawerContent={props => <CustomDrawer {...props} />} screenOptions={{headerShown: false}}>
         <Drawer.Screen name="Profile" component={TabNavigator} />
         <Drawer.Screen name="Settings" component={SettingScreen} />
