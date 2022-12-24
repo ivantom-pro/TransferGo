@@ -11,11 +11,10 @@ export const AuthProvider = ({children }) => {
 
     const login = (username, password) => {
         let data = JSON.stringify({username, password})
-        console.log(data)
 
         setIsLoading(true);
         
-        fetch("http://172.20.10.4:8000/api/auth/sing_in/", {
+        fetch("http://127.0.0.1:8000/api/auth/sing_in/", {
             method: 'POST',
             headers: {
                 'Content-type': 'application/json'
@@ -29,7 +28,10 @@ export const AuthProvider = ({children }) => {
             console.log(data)
             console.log(data.Token)
         })
-        .catch(error => console.log(error))
+        .catch(error => {
+            console.log(error)
+            alert("connexion error")
+        })
 
 
         //setUserToken('terb');
