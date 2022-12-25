@@ -1,18 +1,31 @@
-import { setStatusBarStyle, StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
-import { Platform, NativeModules } from 'react-native';
+import React, { useContext, useState } from "react";
+import { Platform, KeyboardAvoidingView, NativeModules } from 'react-native';
 import  { StyleSheet, Text, View, TextInput, TouchableOpacity, Button, SafeAreaView} from 'react-native';
+import { ScrollView } from "react-native-gesture-handler";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import CustomButton from "../components/CustomButton";
 import InputField from "../components/InputField";
+import { AuthContext } from "../context/AuthContext";
 
 const LoginScreen = ({navigation}) => {
+  const [username, setUsername] = useState(null);
+  const [password, setPassword] = useState(null);  
+  const {login} = useContext(AuthContext);
+  const {postData} = useContext(AuthContext); 
+
+
     return (
       <SafeAreaView 
         style={{ flex: 1,
           justifyContent: 'center',
           paddingTop: Platform.OS === 'android' ? StatusBarManager.HEIGHT :0, }}
         >
+
+          
+          <KeyboardAvoidingView 
+            style={styles.container} 
+            behavior={Platform.OS === "ios" ? "padding" : "height"} 
+            enabled>
           <View style={{paddingHorizontal: 25}}>
             <View style={{justifyContent: 'center', alignItems: 'center'}}>
               <View style={styles.icon}>
@@ -34,7 +47,9 @@ const LoginScreen = ({navigation}) => {
                   style={{marginRight: 5}}
                 />
               }
-              keyboardType="email-address"
+              keyboardType="username"
+              value={username}
+              onChangeText={text => setUsername(text)}
             />
 
             <InputField 
@@ -50,9 +65,11 @@ const LoginScreen = ({navigation}) => {
               inputType="password"
               fieldButtonLabel={"Forgot?"}
               fieldButtonfunction={() => {}}
+              value={password}
+              onChangeText={text => setPassword(text)}
             />
 
-            <CustomButton label={"Login"} onPress={() => navigation.navigate('Profile')}/>
+            <CustomButton label={"Login"} onPress={() => {login(username, password)}}/>
 
             <View style={{flexDirection: 'row', justifyContent: 'center', marginBottom: 30}}>
               <Text>New to the app?</Text>
@@ -63,6 +80,9 @@ const LoginScreen = ({navigation}) => {
 
 
           </View>
+          
+          </KeyboardAvoidingView>
+
       </SafeAreaView>
     )
   }
@@ -71,6 +91,9 @@ const LoginScreen = ({navigation}) => {
   
   
   const styles = StyleSheet.create({
+    container: {
+    
+    },
 
     icon: {
       width: 200, 

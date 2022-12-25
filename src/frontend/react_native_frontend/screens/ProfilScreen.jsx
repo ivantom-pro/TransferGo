@@ -14,6 +14,10 @@ const ProfilScreen = ({navigation}) => {
                 </View> 
 
             <ScrollView style={{backgroundColor: "#2137B2"}}>
+                <View style={styles.align}>
+                    <Text>Balance</Text>
+                    <Text>0000 FCFA</Text>
+                </View>
 
             </ScrollView>
         </View>
@@ -31,6 +35,18 @@ const styles = StyleSheet.create(
             alignItems: 'center',
             justifyContent: 'space-between',
             paddingRight: 10,
-        }
+        },
+        align: {
+            alignItems: "center",
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            padding: 20,
+            backgroundColor: '#ccc',
+            borderRadius: 10,
+            marginBottom: 5,
+            marginTop: 10,
+            marginLeft: 10,
+            marginRight: 10,
+        },
     }
 )
