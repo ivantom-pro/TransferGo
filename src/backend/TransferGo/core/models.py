@@ -16,7 +16,7 @@ class Profile(models.Model):
     pin = models.PositiveIntegerField(default=1234)
     created_at = models.DateTimeField(auto_now_add=True )
     deleted_at = models.DateTimeField(blank=True,null=True)
-    user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, related_name='profile')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
 
     def __str__(self):
         return f"profile of {self.user.username}"

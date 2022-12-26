@@ -72,9 +72,13 @@ class ProfileCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = validated_data.pop('user')
+        print(user)
         serializer = UserSerializer(data=user)
         serializer.is_valid(raise_exception=True)
         user_instance = serializer.save()
+        user_instance.set_password(user_instance.password)
+        user_instance.save()
+        print(user_instance.password)
         validated_data['user'] = user_instance
 
         profile = Profile(**validated_data)
