@@ -156,6 +156,9 @@ class TransactionViewSet(CreateModelMixin, DestroyModelMixin, ListModelMixin, Re
         if profile is None:
             return Response({'detail': 'this number does not match with no one of our users'})
 
+        if profile.user == request.user:
+            return Response({'detail':'Sorry, You can\'t make a transaction to your self'})
+
         serializer.validated_data['sender'] = sender
         receiver = profile.user.account
         serializer.validated_data['receiver'] = receiver
