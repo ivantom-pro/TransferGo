@@ -4,6 +4,7 @@ from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext_lazy as _
 
 
 User = get_user_model()
@@ -16,7 +17,7 @@ class Profile(models.Model):
     pin = models.PositiveIntegerField(default=1234)
     created_at = models.DateTimeField(auto_now_add=True )
     deleted_at = models.DateTimeField(blank=True,null=True)
-    user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, related_name='profile')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
 
     def __str__(self):
         return f"profile of {self.user.username}"
@@ -85,6 +86,6 @@ class Transaction(models.Model):
             })
         if not self.sender.is_commercial():
             raise ValidationError({
-                "sender": _("your are not allow to done a transaction you heve a simple account ")
+                "sender": _("your are not allow to perform the transaction you heve a simple account ")
             })
 
