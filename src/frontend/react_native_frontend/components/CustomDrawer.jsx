@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { View, Text } from "react-native";
+import { View, Text, ImageBackground } from "react-native";
 import { DrawerContentScrollView, DrawerItemList } from "@react-navigation/drawer";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -10,11 +10,17 @@ export default function CustomDrawer(props) {
     const {logout} = useContext(AuthContext);
     return(
         <View style={{flex: 1}}>
-            <DrawerContentScrollView {...props}>
-                <DrawerItemList 
-                {...props} 
-                contentContainerStyle={{}}
-                />
+            <DrawerContentScrollView 
+                {...props}
+                contentContainerStyle={{
+                    backgroundColor: "#2137B2",
+                }}>
+                    <View style={{paddingBottom: 20, paddingTop: 20}}> 
+                        <MaterialIcons name="account-circle" size={100} color={'#fff'} style={{marginBottom: 10}} />
+                    </View>
+            <View style={{flex: 1, backgroundColor: '#fff', paddingTop: 10}}>
+                <DrawerItemList {...props}/>
+            </View>
             </DrawerContentScrollView> 
 
             <View style={{padding: 20, borderTopWidth: 1, borderTopColor: '#ccc'}}>

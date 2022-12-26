@@ -2,13 +2,13 @@ import { View,Text, TouchableOpacity, StyleSheet } from "react-native";
 import React from "react";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
-export default function Header({label, onPress}) {
+export default function Header({label, ...navigation}) {
     return (
         <View>
             <View style={styles.head}>
                 <Text style={styles.text}>{label}</Text>
 
-                <TouchableOpacity onPress={onPress}>
+                <TouchableOpacity onPress={() => {navigation.openDrawer()}}>
                     <MaterialIcons name="menu" size={30} color="#fff" />
                 </TouchableOpacity>            
             </View>

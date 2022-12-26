@@ -6,15 +6,16 @@ import { BASE_URL } from "../Config";
 export const AuthContext = createContext()
 
 export const AuthProvider = ({children }) => {
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [userToken, setUserToken] = useState(null);
+    const [userInfo, setUserInfo] = useState(null);
 
-    const login = (username, password) => {
+    const login = async(username, password) => {
         let data = JSON.stringify({username, password})
 
         setIsLoading(true);
         
-        fetch("http://127.0.0.1:8000/api/auth/sing_in/", {
+        fetch("http://172.20.10.4:8000/api/auth/sing_in/", {
             method: 'POST',
             headers: {
                 'Content-type': 'application/json'
@@ -25,52 +26,45 @@ export const AuthProvider = ({children }) => {
             return response.json()
         })
         .then(function(data){
-            console.log(data)
-            console.log(data.Token)
-        })
-        .catch(error => {
-            console.log(error)
-            alert("connexion error")
-        })
+            let userInfo = data
 
+            setUserInfo(userInfo);
+            setUserToken(userInfo.Token)
 
-        //setUserToken('terb');
-        //AsyncStorage.setItem('userToken', 'terb')
+            AsyncStorage.setItem('userInfo', JSON.stringify(userInfo))
+            AsyncStorage.setItem('userToken', userInfo.Token)
+
+            console.log(userInfo);
+            console.log(userInfo.Token);
+        })
+        .catch(error => {console.log(error); alert("Either user name or password are incorrect, please verify and retry")})
+
         setIsLoading(false);
-    }
-
-    const postData = async(username, password) => {
-        const url = "http://127.0.0.1:8000/api/auth/sing_in";
-        const data = {
-            username,
-            password
-        }
-        try {
-            const reponse = await axios.post(url, data)
-
-            if(reponse.status === 200) {
-                console.log('Success')
-            }
-        }catch(error) {
-            alert("Connexion error")
-            console.log(username, password);
-            console.log(error);
-        }
     }
 
     const logout = (username, password) => {
         setIsLoading(true);
         setUserToken(null);
+        AsyncStorage.removeItem('userInfo')
         AsyncStorage.removeItem('userToken')
+
         setIsLoading(false);
     }
 
     const isLoggedIn = async() => {
         try {
             setIsLoading(true);
+            let userInfo = await AsyncStorage.getItem('userInfo');
             let userToken = await AsyncStorage.getItem('userToken');
-            setUserToken(userToken);  
-            setIsLoading(false);       
+            userInfo = JSON.parse(userInfo);
+
+            if(userInfo) {
+                setUserToken(userToken); 
+                setUserInfo(userInfo);               
+            }
+
+            setIsLoading(false);
+      
         } catch(e) {
             console.log(`isLogged in error ${e}`)
         }
@@ -82,7 +76,7 @@ export const AuthProvider = ({children }) => {
     }, []);
  
     return(
-        <AuthContext.Provider value={{login, logout, postData, isLoading, userToken }}>
+        <AuthContext.Provider value={{login, logout, isLoading, userToken , userInfo}}>
             {children}
         </AuthContext.Provider>
     );

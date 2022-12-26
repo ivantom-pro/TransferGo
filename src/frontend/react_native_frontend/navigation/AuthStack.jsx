@@ -27,7 +27,6 @@ const AuthStack = () => {
           component={RegisterScreen} 
           name="Register" 
         />
-
       </Stack.Navigator>
     );
 };

@@ -6,7 +6,7 @@ import Header from "../components/Header";
 const HelpScreen = ({navigation}) => {
     return (
         <View>
-            <Header label={"Help"} onPress={() => navigation.openDrawer()}/>
+            <Header label={"Help"} {...navigation} />
         </View>
     )
 }

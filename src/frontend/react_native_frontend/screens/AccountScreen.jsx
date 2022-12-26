@@ -1,12 +1,14 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+
 import Header from "../components/Header";
 
 
-const AccountScreen = () => {
+const AccountScreen = ({navigation}) => {
     return (
         <View>
-            <Header label={"Account"} />
+            <Header label={"Account"} {...navigation} />
             <View style={styles.align}>
                     <Text>Current balance</Text>
                     <Text>0000</Text>                    
@@ -18,9 +20,11 @@ const AccountScreen = () => {
             </View>
             <TouchableOpacity style={styles.btn}>
                 <Text style={{color: "#fff"}}>Change password</Text>
+                <MaterialIcons name="arrow-forward-ios"  size={22} color="#fff"/>
             </TouchableOpacity>
             <TouchableOpacity style={styles.btn}>
                 <Text style={{color: "#fff"}}>Forgot password</Text>
+                <MaterialIcons name="arrow-forward-ios"  size={22} color="#fff"/>
             </TouchableOpacity>
         </View>
     )
@@ -43,6 +47,9 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     btn: {
+        alignItems: "center",
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         backgroundColor: '#2137B2',
         color: "#fff",
         padding: 20,

@@ -6,6 +6,7 @@ import ProfilScreen from "../screens/ProfilScreen";
 import TransferScreen from "../screens/TransferScreen";
 import AccountScreen from "../screens/AccountScreen";
 import MessageScreen from "../screens/MessageScreen";
+import Transactions from "../screens/Transactions";
 
 const Tab = createBottomTabNavigator();
 
@@ -14,7 +15,7 @@ export default function TabNavigator() {
         <Tab.Navigator screenOptions={{
             headerShown: false, 
             tabBarActiveTintColor: '#2137B2',
-            tabBarInactiveTintColor: '#ccc'
+            tabBarInactiveTintColor: '#555'
         }}>
         <Tab.Screen
             name="Profil"
@@ -29,10 +30,10 @@ export default function TabNavigator() {
           />
 
           <Tab.Screen
-            name="Transaction"
+            name="Transaction1"
             component={TransferScreen}
             options={{
-              title: "Transacti2137B2on",
+              title: "Transaction1",
               tabBarLabel: "Transaction",
               tabBarIcon: ({ color, size }) => (
                 <MaterialIcons name="attach-money" color={color} size={size} />
