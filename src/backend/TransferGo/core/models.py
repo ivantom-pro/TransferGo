@@ -4,6 +4,7 @@ from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext_lazy as _
 
 
 User = get_user_model()
@@ -85,6 +86,6 @@ class Transaction(models.Model):
             })
         if not self.sender.is_commercial():
             raise ValidationError({
-                "sender": _("your are not allow to do the transaction you heve a simple account ")
+                "sender": _("your are not allow to perform the transaction you heve a simple account ")
             })
 
