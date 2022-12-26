@@ -62,8 +62,11 @@ class ProfileCreateSerializer(serializers.ModelSerializer):
                 'required': True,
             },
             'pin': {
-                'write_only': True,
+                'read_only': True,
             },
+            'deleted_at': {
+                'read_only': True,
+            }
 
         }
 
@@ -89,6 +92,9 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = '__all__'
         extra_kwargs = {
             'pin': {
+                'write_only': True,
+            },
+            'deleted_at': {
                 'write_only': True,
             }
 
