@@ -15,7 +15,7 @@ export const AuthProvider = ({children }) => {
 
         setIsLoading(true);
         
-        fetch("http://172.20.10.4:8000/api/auth/sing_in/", {
+        fetch(`${BASE_URL}/auth/sing_in/`, {
             method: 'POST',
             headers: {
                 'Content-type': 'application/json'
@@ -34,8 +34,6 @@ export const AuthProvider = ({children }) => {
             AsyncStorage.setItem('userInfo', JSON.stringify(userInfo))
             AsyncStorage.setItem('userToken', userInfo.Token)
 
-            console.log(userInfo);
-            console.log(userInfo.Token);
         })
         .catch(error => {console.log(error); alert("Either user name or password are incorrect, please verify and retry")})
 
@@ -71,12 +69,25 @@ export const AuthProvider = ({children }) => {
 
     }
 
+    const register = (username, firstname, lastname, email, date, password1) => {
+        fetch(`${BASE_URL}/profile`, {
+            method: 'POST'
+        })
+        .then(function(response) {
+            console.log("user created")
+            return response.json()
+        })
+        .catch(function(error){
+            console.log(error)
+        })
+    }
+
     useEffect(() => {
         isLoggedIn();
     }, []);
  
     return(
-        <AuthContext.Provider value={{login, logout, isLoading, userToken , userInfo}}>
+        <AuthContext.Provider value={{login, logout, register, isLoading, userToken , userInfo}}>
             {children}
         </AuthContext.Provider>
     );

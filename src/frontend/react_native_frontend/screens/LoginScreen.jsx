@@ -11,7 +11,6 @@ const LoginScreen = ({navigation}) => {
   const [username, setUsername] = useState(null);
   const [password, setPassword] = useState(null);  
   const {login} = useContext(AuthContext);
-  const {postData} = useContext(AuthContext); 
 
 
     return (

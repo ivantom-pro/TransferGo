@@ -1,20 +1,51 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, DatePickerIOS, SafeAreaView, KeyboardAvoidingView, Platform} from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import DatePicker from "react-native-date-picker";
 import InputField from "../components/InputField";
 import CustomButton from "../components/CustomButton";
+import { AuthContext } from "../context/AuthContext";
+
 
 const RegisterScreen = ({navigation}) => {
+  const {register} = useContext(AuthContext); 
   const [username, setUsername] = useState(null);
-  const [firsname, setFirsname] = useState(null);
+  const [firstname, setFirstname] = useState(null);
   const [lastname, setLastname] = useState(null);
   const [email, setEmail] = useState(null);
+  const [phone, setPhone] = useState(null);
+
   const [password1, setPassword1] = useState(null);
   const [password2, setPassword2] = useState(null);
 
-  const [date, setDate] = useState(new Date())
-  const [open, setOpen] = useState(false)
+  const [date, setDate] = useState(new Date(1598051730000));
+  const [mode, setMode] = useState('date');
+  const [show, setShow] = useState(false);
+
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate;
+    setShow(false);
+    setDate(currentDate);
+  };
+
+  const showMode = (currentMode) => {
+    if (Platform.OS === 'android') {
+      setShow(false);
+      // for iOS, add a button that closes the picker
+    }
+    setMode(currentMode);
+  };
+
+  const showDatepicker = () => {
+    showMode('date');
+  };
+
+  const showTimepicker = () => {
+    showMode('time');
+  };
+
+
+
 
   const verifyPassword = (password1, password2)  => {
     if(password1 != null && password2 != null) {
@@ -42,6 +73,7 @@ const RegisterScreen = ({navigation}) => {
         >
           <ScrollView showsVerticalScrollIndicator={false} style={{paddingHorizontal: 25}}>
 
+
           <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 30}}>
               <View style={styles.icon}>
                 <Text style={{fontSize: 128, transform: [{rotate: '-15deg'}]}}>TF</Text>
@@ -62,6 +94,8 @@ const RegisterScreen = ({navigation}) => {
                   style={{marginRight: 5}}
                 />
               }
+              value={username}
+              onChangeText={text => setUsername(text)}
             />
             <InputField 
               label={'FirstName'}
@@ -73,6 +107,8 @@ const RegisterScreen = ({navigation}) => {
                   style={{marginRight: 5}}
                 />
               }
+              value={firstname}
+              onChangeText={text => setFirstname(text)}
             />
 
             <InputField 
@@ -85,6 +121,8 @@ const RegisterScreen = ({navigation}) => {
                   style={{marginRight: 5}}
                 />
               }
+              value={lastname}
+              onChangeText={text => setLastname(text)}
             />
 
             <InputField 
@@ -98,7 +136,45 @@ const RegisterScreen = ({navigation}) => {
                 />
               }
               keyboardType="email-address"
+              value={email}
+              onChangeText={text => setEmail(text)}
             />
+
+            <InputField 
+              label={'Phone'}
+              icon={
+                <MaterialIcons 
+                  name="phone"
+                  size={20}
+                  color="#666"
+                  style={{marginRight: 5}}
+                />
+              }
+              value={phone}
+              onChangeText={text => setPhone(text)}
+            />
+
+          <View>
+            <View style={styles.inputField}>
+              <MaterialIcons 
+                name="date-range"
+                size={20}
+                color="#666"
+                style={{marginRight: 5}}
+              />
+          
+              <TouchableOpacity  onPress={showDatepicker} >
+                <Text style={{color: "#ccc", marginLeft: 5}}>Date of birth: {date.toLocaleDateString()}</Text>
+                  <DateTimePicker
+                    testID="dateTimePicker"
+                    value={date}
+                    mode={mode}
+                    is24Hour={true}
+                    onChange={onChange}
+                  />
+              </TouchableOpacity>
+            </View>
+            </View>
 
             <InputField 
               label={'Password'}
@@ -129,56 +205,9 @@ const RegisterScreen = ({navigation}) => {
               onChangeText = {text => setPassword2(text)}
             />
 
-            <InputField 
-              label={'Phone'}
-              icon={
-                <MaterialIcons 
-                  name="account-circle"
-                  size={20}
-                  color="#666"
-                  style={{marginRight: 5}}
-                />
-              }
-            />
 
-            <View style={styles.inputField}>
-              <MaterialIcons 
-                name="date-range"
-                size={20}
-                color="#666"
-                style={{marginRight: 5}}
-              />
-              <TouchableOpacity onPress={() => {setOpen(true)}}>
-                <Text style={{color: "#ccc", marginLeft: 5}}>Date of birth</Text>
-                <DatePicker 
-                  modal
-                  open={open}
-                  date={date}
-                  onConfirm={(date) => {
-                    setOpen(false)
-                    setDate(date)
-                  }}
-                  onCancel={() => {
-                    setOpen(false)
-                  }}
-                />
-              </TouchableOpacity>
-            </View>
 
-            <InputField 
-              label={'Pin'}
-              icon={
-                <MaterialIcons 
-                  name="account-circle"
-                  size={20}
-                  color="#666"
-                  style={{marginRight: 5}}
-                />
-              }
-            />
-      </KeyboardAvoidingView>
-
-            <CustomButton label={"Register"} onPress={() => {if(verifyPassword(password1, password2)){console.log("gooooood")}else{console.log('baaaaaad')}}} />
+            <CustomButton label={"Register"} onPress={() => {register(username, firstname, lastname, email, date.toLocaleDateString(), password1)}} />
 
             <View style={{flexDirection: 'row', justifyContent: 'center', marginBottom: 30}}>
               <Text>Already registered?</Text>
@@ -186,7 +215,7 @@ const RegisterScreen = ({navigation}) => {
                 <Text style={styles.dummyText}>Login</Text>
               </TouchableOpacity>              
             </View>
-
+      </KeyboardAvoidingView>
           </ScrollView>
       </SafeAreaView>
     )
