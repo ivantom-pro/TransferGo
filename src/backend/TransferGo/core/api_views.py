@@ -70,7 +70,7 @@ class UpdatePasswordViewSet(CreateModelMixin,GenericViewSet):
 ), 'create')
 class ProfileViewSet(CreateModelMixin, ListModelMixin, UpdateModelMixin, RetrieveModelMixin, GenericViewSet):
     serializer_class = ProfileSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         user = self.request.user
