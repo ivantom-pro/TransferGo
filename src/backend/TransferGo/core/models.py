@@ -85,6 +85,6 @@ class Transaction(models.Model):
             })
         if not self.sender.is_commercial():
             raise ValidationError({
-                "sender": _("your are not allow to done a transaction you heve a simple account ")
+                "sender": _("your are not allow to do the transaction you heve a simple account ")
             })
 
