@@ -68,7 +68,13 @@ const LoginScreen = ({navigation}) => {
               onChangeText={text => setPassword(text)}
             />
 
-            <CustomButton label={"Login"} onPress={() => {login(username, password)}}/>
+            <CustomButton label={"Login"} onPress={() => {
+              if(username == null || password == null) {
+                alert("Either user name or password are incorrect, please verify and retry")
+              }else {
+                login(username, password)
+              }
+            }}/>
 
             <View style={{flexDirection: 'row', justifyContent: 'center', marginBottom: 30}}>
               <Text>New to the app?</Text>

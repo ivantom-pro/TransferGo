@@ -69,17 +69,40 @@ export const AuthProvider = ({children }) => {
 
     }
 
-    const register = (username, firstname, lastname, email, date, password1) => {
-        fetch(`${BASE_URL}/profile`, {
-            method: 'POST'
+    const register = (username, first_name, last_name, email, password1, phone, birthday, adress) => {
+        birthday = birthday.split("/").reverse().join("-");
+        let d = {
+            "user":{
+              "username":username,
+              "first_name":first_name,
+              "last_name":last_name,
+              "email":email,
+              "password":password1
+            },
+            "phone":phone,
+            "birthday":birthday,
+            "adress":adress
+          }
+          let data = JSON.stringify(d)
+
+        fetch(`${BASE_URL}/profile/`, {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: data
         })
         .then(function(response) {
-            console.log("user created")
             return response.json()
         })
-        .catch(function(error){
-            console.log(error)
+        .then(function(data){
+            let userRegInfo = data
+            console.log(userRegInfo)
         })
+        .catch(function(error){
+            console.log(error);
+        })
+        
     }
 
     useEffect(() => {

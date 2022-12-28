@@ -9,23 +9,25 @@ import { AuthContext } from "../context/AuthContext";
 
 const RegisterScreen = ({navigation}) => {
   const {register} = useContext(AuthContext); 
+
   const [username, setUsername] = useState(null);
-  const [firstname, setFirstname] = useState(null);
-  const [lastname, setLastname] = useState(null);
+  const [first_name, setFirst_name] = useState(null);
+  const [last_name, setLast_name] = useState(null);
   const [email, setEmail] = useState(null);
+  const [adress, setAdress] = useState(null);
   const [phone, setPhone] = useState(null);
 
   const [password1, setPassword1] = useState(null);
   const [password2, setPassword2] = useState(null);
 
-  const [date, setDate] = useState(new Date(1598051730000));
+  const [birthday, setBirthday] = useState(new Date(1598051730000));
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
 
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate;
+  const onChange = (event, selectedBirthday) => {
+    const currentBirthday = selectedBirthday;
     setShow(false);
-    setDate(currentDate);
+    setBirthday(currentBirthday);
   };
 
   const showMode = (currentMode) => {
@@ -40,28 +42,20 @@ const RegisterScreen = ({navigation}) => {
     showMode('date');
   };
 
-  const showTimepicker = () => {
-    showMode('time');
-  };
 
 
 
 
-  const verifyPassword = (password1, password2)  => {
+  const verifyPassword = (password1, password2, username, first_name, last_name, email, phone, birthday, adress)  => {
     if(password1 != null && password2 != null) {
       if(password1 === password2) {
-        console.log("Equal");
-        return true;       
+        register(username, first_name, last_name, email, password1, phone, birthday.toLocaleDateString(), adress);
+        navigation.goBack(); 
       }else {
-        console.log("Not equal");
-        setPassword1(null);
-        setPassword2(null);
-        console.log(password1);
-        return false;
+        alert("Password do not match");
      }
     }else {
-      console.log("Some fields are empty");
-      return false;
+      alert("Some fields may be empty")
     }
   }
 
@@ -73,6 +67,7 @@ const RegisterScreen = ({navigation}) => {
         >
           <ScrollView showsVerticalScrollIndicator={false} style={{paddingHorizontal: 25}}>
 
+          <KeyboardAvoidingView>
 
           <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 30}}>
               <View style={styles.icon}>
@@ -83,7 +78,6 @@ const RegisterScreen = ({navigation}) => {
               <Text style={styles.loginText}>Register</Text>
             </View>
 
-<KeyboardAvoidingView>
             <InputField 
               label={'UserName'}
               icon={
@@ -107,8 +101,8 @@ const RegisterScreen = ({navigation}) => {
                   style={{marginRight: 5}}
                 />
               }
-              value={firstname}
-              onChangeText={text => setFirstname(text)}
+              value={first_name}
+              onChangeText={text => setFirst_name(text)}
             />
 
             <InputField 
@@ -121,8 +115,8 @@ const RegisterScreen = ({navigation}) => {
                   style={{marginRight: 5}}
                 />
               }
-              value={lastname}
-              onChangeText={text => setLastname(text)}
+              value={last_name}
+              onChangeText={text => setLast_name(text)}
             />
 
             <InputField 
@@ -164,10 +158,10 @@ const RegisterScreen = ({navigation}) => {
               />
           
               <TouchableOpacity  onPress={showDatepicker} >
-                <Text style={{color: "#ccc", marginLeft: 5}}>Date of birth: {date.toLocaleDateString()}</Text>
+                <Text style={{color: "#ccc", marginLeft: 5}}>Date of birth: {birthday.toLocaleDateString()}</Text>
                   <DateTimePicker
                     testID="dateTimePicker"
-                    value={date}
+                    value={birthday}
                     mode={mode}
                     is24Hour={true}
                     onChange={onChange}
@@ -175,6 +169,20 @@ const RegisterScreen = ({navigation}) => {
               </TouchableOpacity>
             </View>
             </View>
+
+            <InputField 
+              label={'Address'}
+              icon={
+                <MaterialIcons 
+                  name="home"
+                  size={20}
+                  color="#666"
+                  style={{marginRight: 5}}
+                />
+              }
+              value={adress}
+              onChangeText={text => setAdress(text)}
+            />
 
             <InputField 
               label={'Password'}
@@ -207,7 +215,7 @@ const RegisterScreen = ({navigation}) => {
 
 
 
-            <CustomButton label={"Register"} onPress={() => {register(username, firstname, lastname, email, date.toLocaleDateString(), password1)}} />
+            <CustomButton label={"Register"} onPress={() => {verifyPassword(password1, password2, username, first_name, last_name, email, phone, birthday, adress)}} />
 
             <View style={{flexDirection: 'row', justifyContent: 'center', marginBottom: 30}}>
               <Text>Already registered?</Text>
