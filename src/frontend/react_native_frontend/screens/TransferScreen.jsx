@@ -13,7 +13,7 @@ const TransferScreen = ({navigation}) => {
                 <Text style={styles.txt}>Recharge account</Text>
                 <MaterialIcons name="arrow-forward-ios"  size={22} color="#fff"/>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.btn} onPress={alert('ssgsdg')}>
+            <TouchableOpacity style={styles.btn} onPress={() => {navigation.navigate('DoTransfer')}}>
                 <Text style={styles.txt}>Money transfer</Text>
                 <MaterialIcons name="arrow-forward-ios"  size={22} color="#fff"/>
             </TouchableOpacity>

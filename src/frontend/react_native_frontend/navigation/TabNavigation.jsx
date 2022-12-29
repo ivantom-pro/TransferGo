@@ -30,10 +30,10 @@ export default function TabNavigator() {
           />
 
           <Tab.Screen
-            name="Transaction1"
-            component={TransferScreen}
+            name="Transaction"
+            component={Transactions}
             options={{
-              title: "Transaction1",
+              title: "Transaction",
               tabBarLabel: "Transaction",
               tabBarIcon: ({ color, size }) => (
                 <MaterialIcons name="attach-money" color={color} size={size} />

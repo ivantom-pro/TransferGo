@@ -1,5 +1,5 @@
-let username = "teyouronan"
-let password = "terb1234"
+let username = "wilbrown"
+let password = "D@rkness1234"
 let first_name = "ronan"
 let last_name = "teyou"
 let email ="teyouronan@gmail.com"
@@ -7,8 +7,7 @@ let phone = "696715846"
 let birthday = "2002/08/15"
 let adress = "odza"
 
-/*let data = JSON.stringify({username, password})
-console.log(data)
+let data = JSON.stringify({username, password})
 
 fetch("http://0.0.0.0:8000/api/auth/sing_in/", {
     method: 'POST',
@@ -21,8 +20,8 @@ fetch("http://0.0.0.0:8000/api/auth/sing_in/", {
     return response.json()
 })
 .then(function(data){
-    console.log(data)
-    console.log(data.Token)
+    var Token = data.Token
+    console.log(Token)
     let usr = data.profile.user.username
     let mail = data.profile.user.email
     let phone = data.profile.phone
@@ -35,7 +34,7 @@ fetch("http://0.0.0.0:8000/api/auth/sing_in/", {
 .catch(error => console.log(error))
 
 document.getElementById("name").innerHTML = usr;
-*/
+
 
 /*let user = JSON.stringify({username, first_name, last_name, email, password});
 let data = JSON.stringify({user, phone, birthday, adress});
@@ -79,8 +78,19 @@ let o = {
     alert(data);
 })*/
 
-var date = "24/09/2018";
-date = date.split("/").reverse().join("-");
-
-
-console.log(date); //print "2018/09/24"
+fetch(`http://0.0.0.0:8000/api/profile/`, {
+    method: 'GET',
+    headers: {
+        Token : Token
+    }
+})
+.then(function(response){
+    return response.json();
+})
+.then(function(data){
+    let userAccountInfo = data;
+    console.log(userAccountInfo);
+})
+.then(function(error){
+    console.log(error);
+})

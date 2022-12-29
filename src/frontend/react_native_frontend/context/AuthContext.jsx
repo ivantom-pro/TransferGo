@@ -58,7 +58,24 @@ export const AuthProvider = ({children }) => {
 
             if(userInfo) {
                 setUserToken(userToken); 
-                setUserInfo(userInfo);               
+                setUserInfo(userInfo);
+                
+                let id = userInfo.profile.user.id
+                console.log(id);
+                
+                fetch(`${BASE_URL}/profile/${id}/`, {
+                    method: 'GET',
+                })
+                .then(function(response){
+                    return response.json();
+                })
+                .then(function(data){
+                    let userAccountInfo = data;
+                    console.log(userAccountInfo);
+                })
+                .then(function(error){
+                    console.log(error);
+                })
             }
 
             setIsLoading(false);
