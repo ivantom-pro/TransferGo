@@ -7,34 +7,81 @@ let phone = "696715846"
 let birthday = "2002/08/15"
 let adress = "odza"
 
-let data = JSON.stringify({username, password})
+const login = async(username, password) => {
+    let data = JSON.stringify({username, password})
+    
+    const userInfo = await fetch(`http://0.0.0.0:8000/api/auth/sing_in/`, {
+        method: 'POST',
+        headers: {
+            'Content-type': 'application/json'
+        },
+        body: data
+    })
+    .then(function(response){
+        return response.json()
+    })
+    .catch(error => {console.log(error)})
 
-fetch("http://0.0.0.0:8000/api/auth/sing_in/", {
-    method: 'POST',
-    headers: {
-        'Content-type': 'application/json'
-    },
-    body: data
-})
-.then(function(response){
-    return response.json()
-})
-.then(function(data){
-    var Token = data.Token
-    console.log(Token)
-    let usr = data.profile.user.username
-    let mail = data.profile.user.email
-    let phone = data.profile.phone
-
+    let usr = userInfo.profile.user.username;
+    let mail = userInfo.profile.user.email;
+    let phone = userInfo.profile.phone   ; 
     document.getElementById("name").innerHTML = usr;
     document.getElementById("email").innerHTML = mail;
     document.getElementById("phone").innerHTML = phone;
+
+    let token = "token " + userInfo.Token;
+    const userAccountInfo = await fetch(`http://0.0.0.0:8000/api/account/`, {
+        method: 'GET',
+        headers: {
+            'Content-type': 'application/json',
+            'Authorization' : token
+        }
+    })
+    .then(function(response){
+        return response.json()
+    })
+    .catch(error => {console.log(error)})
+
+    let userAccount = userAccountInfo[0];
+    let me = userAccount.balance;
+    document.getElementById("me").innerHTML = me;
     
-})
-.catch(error => console.log(error))
+}
 
-document.getElementById("name").innerHTML = usr;
+login(username, password);
 
+let amount = "1000";
+let type = "transfer"; //transfer, withdraw
+let number = "697667213"
+
+const transfer = async (amount, type, number) => {
+    let token = "token " + userInfo.Token;
+    let data = {
+        "amount":amount,
+        "type":type,
+        "number":number
+    }
+    console.log(data);
+
+    const transferInfo = await fetch(`${BASE_URL}/transactions/`, {
+        method: 'POST',
+        headers: {
+            'Content-type': 'application/json',
+            'Authorization' : token
+        },
+        data:data
+    })
+    .then(function(response) {
+        return response.json()
+    })
+    .catch(function(error){
+        console.log(error);
+    })
+
+    console.log(transferInfo);
+}
+
+transfer(amount, type, number);
 
 /*let user = JSON.stringify({username, first_name, last_name, email, password});
 let data = JSON.stringify({user, phone, birthday, adress});
@@ -59,38 +106,3 @@ let o = {
   document.getElementById("name").innerHTML = o;
   console.log(o.user.username)
 */
-
-/*fetch(`http://0.0.0.0:8000/api/profile/`, {
-    method: 'POST',
-    headers: {
-        'Content-type': 'application/json'
-    },
-    body: data
-})
-.then(function(response) {
-    return response.json()
-})
-.then(function(data){
-    console.log(data);
-})
-.catch(function(error){
-    console.log(error);
-    alert(data);
-})*/
-
-fetch(`http://0.0.0.0:8000/api/profile/`, {
-    method: 'GET',
-    headers: {
-        Token : Token
-    }
-})
-.then(function(response){
-    return response.json();
-})
-.then(function(data){
-    let userAccountInfo = data;
-    console.log(userAccountInfo);
-})
-.then(function(error){
-    console.log(error);
-})

@@ -6,6 +6,7 @@ import { AuthContext } from "../context/AuthContext";
 
 const ProfilScreen = ({navigation}) => {
     const {userInfo} = useContext(AuthContext);
+    const {userAccount} = useContext(AuthContext);
     return (
         <View>
             <Header label={"Profile"} {...navigation} />
@@ -18,7 +19,7 @@ const ProfilScreen = ({navigation}) => {
             <ScrollView style={{backgroundColor: "#fff", paddingBottom: 100}}>
                 <View style={styles.align}>
                     <Text>Balance</Text>
-                    <Text>17500 FCFA</Text>
+                    <Text>{userAccount.balance}</Text>
                 </View>
                 <View style={styles.align}>
                     <Text>Last transaction</Text>
