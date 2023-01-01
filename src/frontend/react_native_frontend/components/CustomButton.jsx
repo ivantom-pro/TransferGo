@@ -3,16 +3,13 @@ import React from "react";
 
 export default function CustomButton({label, onPress}) {
     return (
-        <TouchableOpacity 
-            onPress={onPress} 
-            style={styles.loginButton}
-        >
+        <TouchableOpacity onPress={onPress} style={styles.loginButton}>
           <Text style={styles.login}>{label}</Text>
-        </TouchableOpacity>    )
+        </TouchableOpacity>    
+    )
 }
 
 const styles = StyleSheet.create({
-
     icon: {
       width: 200, 
       height: 200,

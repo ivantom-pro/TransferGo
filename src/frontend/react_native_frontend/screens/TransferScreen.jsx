@@ -1,9 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-
 import Header from "../components/Header";
-
 
 const TransferScreen = ({navigation}) => {
     return (
@@ -27,7 +25,7 @@ const TransferScreen = ({navigation}) => {
             </TouchableOpacity>
         </View>
     )
-}
+};
 
 export default TransferScreen;
 
@@ -48,4 +46,4 @@ const styles = StyleSheet.create({
     txt: {
         color: "white",
     }
-})
+});

@@ -10,7 +10,6 @@ export default function InputField({
   fieldButtonfunction,
   value,
   onChangeText,
-
 }) {
     return (
         <View>
@@ -39,14 +38,11 @@ export default function InputField({
               <Text style={styles.dummyText}>{fieldButtonLabel}</Text>
             </TouchableOpacity>             
             </View>
-
-
         </View>
     )
 }
 
 const styles = StyleSheet.create({
-
   loginText: {
     fontSize: 28,
     fontWeight: '500',

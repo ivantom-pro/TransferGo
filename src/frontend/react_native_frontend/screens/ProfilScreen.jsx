@@ -1,12 +1,26 @@
 import React, { useState, useContext } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import Header from "../components/Header";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { AuthContext } from "../context/AuthContext";
 
 const ProfilScreen = ({navigation}) => {
     const {userInfo} = useContext(AuthContext);
     const {userAccount} = useContext(AuthContext);
+    const {userTransactionList} = useContext(AuthContext);
+
+    const last = (userTransactionList) => {
+        const last = "None";
+
+        if(!userTransactionList.length) {
+            return last;
+        }else {
+            last = userTransactionList[0].date;
+            last = (last.substring(0,9));
+            last = last.split("-").reverse().join("/");
+            return last;          
+        }
+    }
+
     return (
         <View>
             <Header label={"Profile"} {...navigation} />
@@ -19,11 +33,11 @@ const ProfilScreen = ({navigation}) => {
             <ScrollView style={{backgroundColor: "#fff", paddingBottom: 100}}>
                 <View style={styles.align}>
                     <Text>Balance</Text>
-                    <Text>{userAccount.balance}</Text>
+                    <Text>{userAccount.balance} FCFA</Text>
                 </View>
                 <View style={styles.align}>
                     <Text>Last transaction</Text>
-                    <Text>24-25-2022</Text>
+                    <Text>{last(userTransactionList)}</Text>
                 </View>
                 <View style={styles.align}>
                         <Text>Phone</Text>                        

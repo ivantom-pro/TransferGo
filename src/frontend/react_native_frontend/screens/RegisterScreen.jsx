@@ -1,25 +1,21 @@
 import React, { useState, useContext } from "react";
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, DatePickerIOS, SafeAreaView, KeyboardAvoidingView, Platform} from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, SafeAreaView, KeyboardAvoidingView, Platform} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import InputField from "../components/InputField";
 import CustomButton from "../components/CustomButton";
 import { AuthContext } from "../context/AuthContext";
 
-
 const RegisterScreen = ({navigation}) => {
   const {register} = useContext(AuthContext); 
-
   const [username, setUsername] = useState(null);
   const [first_name, setFirst_name] = useState(null);
   const [last_name, setLast_name] = useState(null);
   const [email, setEmail] = useState(null);
   const [adress, setAdress] = useState(null);
   const [phone, setPhone] = useState(null);
-
   const [password1, setPassword1] = useState(null);
   const [password2, setPassword2] = useState(null);
-
   const [birthday, setBirthday] = useState(new Date(1598051730000));
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
@@ -42,10 +38,6 @@ const RegisterScreen = ({navigation}) => {
     showMode('date');
   };
 
-
-
-
-
   const verifyPassword = (password1, password2, username, first_name, last_name, email, phone, birthday, adress)  => {
     if(password1 != null && password2 != null) {
       if(password1 === password2) {
@@ -58,7 +50,6 @@ const RegisterScreen = ({navigation}) => {
       alert("Some fields may be empty")
     }
   }
-
     return (
       <SafeAreaView 
         style={{ flex: 1,
@@ -213,8 +204,6 @@ const RegisterScreen = ({navigation}) => {
               onChangeText = {text => setPassword2(text)}
             />
 
-
-
             <CustomButton label={"Register"} onPress={() => {verifyPassword(password1, password2, username, first_name, last_name, email, phone, birthday, adress)}} />
 
             <View style={{flexDirection: 'row', justifyContent: 'center', marginBottom: 30}}>
@@ -231,9 +220,7 @@ const RegisterScreen = ({navigation}) => {
   
   export default RegisterScreen
   
-  
   const styles = StyleSheet.create({
-
     icon: {
       width: 200, 
       height: 200,

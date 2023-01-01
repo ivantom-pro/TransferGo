@@ -54,9 +54,6 @@ const DoTransfer = ({navigation}) => {
                     <Picker.Item label="transfert" value="transfert" />
                 </Picker>
             </View>
-
-
-
         </View>
     );
 }

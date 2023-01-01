@@ -1,15 +1,14 @@
-import { setStatusBarStyle, StatusBar } from "expo-status-bar";
 import React from "react";
+import { StatusBar } from "expo-status-bar";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { 
   SafeAreaView,
   StyleSheet, 
   Text, 
   View, 
-  TouchableOpacity
+  TouchableOpacity,
+  Platform
 } from 'react-native';
-
-import { Button } from "react-native";
 
 const StartScreen = ({navigation}) => {
   return (
@@ -31,7 +30,6 @@ const StartScreen = ({navigation}) => {
         </View>      
       </View>
 
-
       <TouchableOpacity 
         onPress={() => navigation.navigate('Login')}
         style={styles.btn}
@@ -45,7 +43,6 @@ const StartScreen = ({navigation}) => {
 }
 
 export default StartScreen
-
 
 const styles = StyleSheet.create({
   go: {

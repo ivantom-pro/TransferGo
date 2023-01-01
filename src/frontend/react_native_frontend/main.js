@@ -45,43 +45,45 @@ const login = async(username, password) => {
     let userAccount = userAccountInfo[0];
     let me = userAccount.balance;
     document.getElementById("me").innerHTML = me;
+
+    let amount = 1000;
+    let type = "transfer"; //transfer, withdraw
+    let number = 697667213;
+
+    let d = {
+        "amount":amount,
+        "type":type,
+        "number":number
+    }
+    let dat = JSON.stringify(d);
+
+    const transferInfo = await fetch(`http://0.0.0.0:8000/api/transactions/`, {
+        method: 'GET',
+        headers: {
+            'Content-type': 'application/json',
+            'Authorization': token
+        },
+
+    })
+    .then(function(response) {
+        return response.json();
+    })
+    .catch(function(error){
+        console.log("this is my error " +error);
+    })
+    if(transferInfo.id) {
+        console.log('Transaction completed');
+    }else {
+        console.log('An error occured')
+    }
+
+    let met = transferInfo.id;
+    document.getElementById("id").innerHTML = met;
     
 }
 
 login(username, password);
 
-let amount = "1000";
-let type = "transfer"; //transfer, withdraw
-let number = "697667213"
-
-const transfer = async (amount, type, number) => {
-    let token = "token " + userInfo.Token;
-    let data = {
-        "amount":amount,
-        "type":type,
-        "number":number
-    }
-    console.log(data);
-
-    const transferInfo = await fetch(`${BASE_URL}/transactions/`, {
-        method: 'POST',
-        headers: {
-            'Content-type': 'application/json',
-            'Authorization' : token
-        },
-        data:data
-    })
-    .then(function(response) {
-        return response.json()
-    })
-    .catch(function(error){
-        console.log(error);
-    })
-
-    console.log(transferInfo);
-}
-
-transfer(amount, type, number);
 
 /*let user = JSON.stringify({username, first_name, last_name, email, password});
 let data = JSON.stringify({user, phone, birthday, adress});

@@ -1,20 +1,17 @@
 import React, { createContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
 import { BASE_URL } from "../Config";
 
-export const AuthContext = createContext()
-
+export const AuthContext = createContext();
 export const AuthProvider = ({children }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [userToken, setUserToken] = useState(null);
     const [userInfo, setUserInfo] = useState(null);
     const [userAccount, setUserAccount] = useState(null);
+    const [userTransactionList, setUserTransactionList] = useState(null);
 
     const login = async(username, password) => {
         let data = JSON.stringify({username, password})
-        console.log(data);
-
         setIsLoading(true);
         
         const userInfo = await fetch(`${BASE_URL}/auth/sing_in/`, {
@@ -42,17 +39,32 @@ export const AuthProvider = ({children }) => {
             headers: {
                 'Content-type': 'application/json',
                 'Authorization' : token
-            },
+            }
         })
         .then(function(response){
             return response.json()
         })
-        .catch(error => {console.log("My error "+error)})
+        .catch(error => {console.log(error)})
 
         let userAccount = userAccountInfo[0];
 
         setUserAccount(userAccount);
         AsyncStorage.setItem('userAccount', JSON.stringify(userAccount))
+
+        const userTransactionList = await fetch(`${BASE_URL}/transactions/`, {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json',
+                'Authorization' : token
+            }
+        })
+        .then(function(response){
+            return response.json()
+        })
+        .catch(error => {console.log(error)});
+
+        setUserTransactionList(userTransactionList);
+        AsyncStorage.setItem('userTransactionList', JSON.stringify(userTransactionList));
 
         setIsLoading(false);
     }
@@ -63,6 +75,7 @@ export const AuthProvider = ({children }) => {
         AsyncStorage.removeItem('userInfo');
         AsyncStorage.removeItem('userToken');
         AsyncStorage.removeItem('userAccount');
+        AsyncStorage.removeItem('userTransactionList');
 
         setIsLoading(false);
     }
@@ -73,18 +86,19 @@ export const AuthProvider = ({children }) => {
             let userInfo = await AsyncStorage.getItem('userInfo');
             let userToken = await AsyncStorage.getItem('userToken');
             let userAccount = await AsyncStorage.getItem('userAccount');
+            let userTransactionList = await AsyncStorage.getItem('userTransactionList');
 
             userInfo = JSON.parse(userInfo);
             userAccount = JSON.parse(userAccount);
+            userTransactionList = JSON.parse(userTransactionList);
 
             if(userInfo) {
                 setUserToken(userToken); 
                 setUserInfo(userInfo);
                 setUserAccount(userAccount);
+                setUserTransactionList(userTransactionList);
             }
-
             setIsLoading(false);
-      
         } catch(e) {
             console.log(`isLogged in error ${e}`)
         }
@@ -124,18 +138,16 @@ export const AuthProvider = ({children }) => {
         .catch(function(error){
             console.log(error);
         })
-        
     }
 
     const transfer = async (amount, type, number) => {
         let token = "token " + userInfo.Token;
-        let data = {
+        let d = {
             "amount":amount,
             "type":type,
             "number":number
         }
-        console.log(data);
-        console.log(token);
+        let data = JSON.stringify(d);
 
         const transferInfo = await fetch(`${BASE_URL}/transactions/`, {
             method: 'POST',
@@ -146,19 +158,40 @@ export const AuthProvider = ({children }) => {
             data:data
         })
         .then(function(response) {
-            return response.json()
+            return response.json();
         })
         .catch(function(error){
             console.log(error);
         })
         
-        if(transfer) {
+        if(transferInfo.id) {
             alert('Transaction completed');
         }else {
             alert('An error occured')
         }
+    }
 
-        console.log(transferInfo);
+    const changePassword = async (old_password, new_password, confirm_password) => {
+        let token = "token " + userInfo.Token;        
+        let data = JSON.stringify({old_password, new_password, confirm_password});
+
+        const changePasswordInfo = await fetch(`${BASE_URL}/auth/update_password/`, {
+            method: "POST",
+            headers: {
+                'Content-type': 'application/json',
+                'Authorization' : token
+            },
+            data:data
+        })
+        .then(function(response){
+            return response.json();
+        })
+        .catch(function(error){
+            console.log(error);
+        })
+        console.log(data);
+
+        console.log(changePasswordInfo)
     }
 
     useEffect(() => {
@@ -166,7 +199,7 @@ export const AuthProvider = ({children }) => {
     }, []);
  
     return(
-        <AuthContext.Provider value={{login, logout, register, transfer, isLoading, userToken , userInfo, userAccount}}>
+        <AuthContext.Provider value={{login, logout, register, transfer, changePassword, isLoading, userToken , userInfo, userAccount, userTransactionList}}>
             {children}
         </AuthContext.Provider>
     );

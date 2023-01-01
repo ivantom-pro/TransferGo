@@ -3,10 +3,10 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
 import ProfilScreen from "../screens/ProfilScreen";
-import TransferScreen from "../screens/TransferScreen";
 import AccountScreen from "../screens/AccountScreen";
 import MessageScreen from "../screens/MessageScreen";
 import Transactions from "../screens/Transactions";
+import Accountmanager from "../screens/AccountManager";
 
 const Tab = createBottomTabNavigator();
 
@@ -43,7 +43,7 @@ export default function TabNavigator() {
 
         <Tab.Screen
             name="account"
-            component={AccountScreen}
+            component={Accountmanager}
             options={{
               title: "My Account",
               tabBarLabel: "Account",
