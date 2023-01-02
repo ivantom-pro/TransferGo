@@ -29,7 +29,7 @@ const login = async(username, password) => {
     document.getElementById("email").innerHTML = mail;
     document.getElementById("phone").innerHTML = phone;
 
-    let token = "token " + userInfo.Token;
+    const token = "token " + userInfo.Token;
     const userAccountInfo = await fetch(`http://0.0.0.0:8000/api/account/`, {
         method: 'GET',
         headers: {
@@ -47,7 +47,7 @@ const login = async(username, password) => {
     document.getElementById("me").innerHTML = me;
 
     let amount = 1000;
-    let type = "transfer"; //transfer, withdraw
+    let type = "transfert"; //transfer, withdraw
     let number = 697667213;
 
     let d = {
@@ -58,12 +58,12 @@ const login = async(username, password) => {
     let dat = JSON.stringify(d);
 
     const transferInfo = await fetch(`http://0.0.0.0:8000/api/transactions/`, {
-        method: 'GET',
+        method: 'POST',
         headers: {
             'Content-type': 'application/json',
             'Authorization': token
         },
-
+        body: dat
     })
     .then(function(response) {
         return response.json();
@@ -71,13 +71,9 @@ const login = async(username, password) => {
     .catch(function(error){
         console.log("this is my error " +error);
     })
-    if(transferInfo.id) {
-        console.log('Transaction completed');
-    }else {
-        console.log('An error occured')
-    }
 
-    let met = transferInfo.id;
+    console.log(transferInfo);
+
     document.getElementById("id").innerHTML = met;
     
 }

@@ -7,17 +7,17 @@ const ProfilScreen = ({navigation}) => {
     const {userInfo} = useContext(AuthContext);
     const {userAccount} = useContext(AuthContext);
     const {userTransactionList} = useContext(AuthContext);
-
+    console.log(userAccount);
     const last = (userTransactionList) => {
-        const last = "None";
+        var lastDate = "None";
 
         if(!userTransactionList.length) {
-            return last;
+            return lastDate;
         }else {
-            last = userTransactionList[0].date;
-            last = (last.substring(0,9));
-            last = last.split("-").reverse().join("/");
-            return last;          
+            lastDate = userTransactionList[0].date;
+            lastDate = (lastDate.substring(0,10));
+            lastDate = lastDate.split("-").reverse().join("/");
+            return lastDate;          
         }
     }
 

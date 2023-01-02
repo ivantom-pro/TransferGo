@@ -1,23 +1,18 @@
 import React, { useContext } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Header from "../components/Header";
 import { AuthContext } from "../context/AuthContext";
+import List from "../components/List";
+import EmptyList from "./EmtyList";
 
 const TransactionList = ({navigation}) => {
     const {userTransactionList} = useContext(AuthContext);
-
     return (
         <View>
             <Header label={"Account"} {...navigation} />
-
-            <Text>Hey</Text>
+            {userTransactionList.length == 0 ? <EmptyList/> : <List />}
         </View>
     )
 }
 
 export default TransactionList;
-
-const styles = StyleSheet.create({
-
-})

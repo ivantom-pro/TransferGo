@@ -9,6 +9,13 @@ const DoTransfer = ({navigation}) => {
     const [type, setType] = useState("cash_in");
     const [number, setNumber] = useState(null);
     const {transfer} = useContext(AuthContext);
+    const data = [{
+        value: 'cash_in',
+      }, {
+        value: 'withdraw',
+      }, {
+        value: 'transfert',
+      }];
 
     return(
         <View>
@@ -43,6 +50,7 @@ const DoTransfer = ({navigation}) => {
                 </TouchableOpacity>               
             </View>
             <View>
+
                 <Picker
                     
                     selectedValue={type}

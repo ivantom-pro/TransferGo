@@ -194,12 +194,16 @@ export const AuthProvider = ({children }) => {
         console.log(changePasswordInfo)
     }
 
+    const DeleteTransaction = () => {
+        console.log("shall be deleted");
+    }
+
     useEffect(() => {
         isLoggedIn();
     }, []);
  
     return(
-        <AuthContext.Provider value={{login, logout, register, transfer, changePassword, isLoading, userToken , userInfo, userAccount, userTransactionList}}>
+        <AuthContext.Provider value={{login, logout, register, transfer, changePassword, DeleteTransaction, isLoading, userToken , userInfo, userAccount, userTransactionList}}>
             {children}
         </AuthContext.Provider>
     );
