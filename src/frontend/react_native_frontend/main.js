@@ -78,7 +78,7 @@ const login = async(username, password) => {
     
 }
 
-login(username, password);
+//login(username, password);
 
 
 /*let user = JSON.stringify({username, first_name, last_name, email, password});
@@ -104,3 +104,8 @@ let o = {
   document.getElementById("name").innerHTML = o;
   console.log(o.user.username)
 */
+
+
+for(var k = 0;k<=9;k+=3) {
+    console.log("Hello");
+}

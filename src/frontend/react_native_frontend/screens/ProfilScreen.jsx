@@ -7,7 +7,8 @@ const ProfilScreen = ({navigation}) => {
     const {userInfo} = useContext(AuthContext);
     const {userAccount} = useContext(AuthContext);
     const {userTransactionList} = useContext(AuthContext);
-    console.log(userAccount);
+    let bd = userInfo.profile.birthday;
+    bd = bd.split("-").reverse().join("-");
     const last = (userTransactionList) => {
         var lastDate = "None";
 
@@ -16,7 +17,7 @@ const ProfilScreen = ({navigation}) => {
         }else {
             lastDate = userTransactionList[0].date;
             lastDate = (lastDate.substring(0,10));
-            lastDate = lastDate.split("-").reverse().join("/");
+            lastDate = lastDate.split("-").reverse().join("-");
             return lastDate;          
         }
     }
@@ -45,7 +46,7 @@ const ProfilScreen = ({navigation}) => {
                 </View>
                 <View style={styles.align}>
                     <Text>My birthday</Text>
-                    <Text>{userInfo.profile.birthday} </Text>
+                    <Text>{bd} </Text>
                 </View>
                 <View style={styles.align}>
                     <Text>Mail</Text>

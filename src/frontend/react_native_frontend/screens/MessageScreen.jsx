@@ -10,9 +10,9 @@ const MessageScreen = ({navigation}) => {
                 <Text style={{
                     fontSize: 32, 
                     color: "#fff", 
-                    padding: 30, 
+                    padding: 30,
                 }}>
-                    Soon Available
+                    Discussion with our customer center available soon Available
                 </Text>
             </View> 
         </View>

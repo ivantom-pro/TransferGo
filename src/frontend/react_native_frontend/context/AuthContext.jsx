@@ -24,15 +24,16 @@ export const AuthProvider = ({children }) => {
         .then(function(response){
             return response.json()
         })
-        .catch(error => {console.log(error); alert("Either user name or password are incorrect, please verify and retry")})
+        .catch(error => {console.log("myy error is a "+error); alert("Either user name or password are incorrect, account doesn't exist")})
 
-        setUserInfo(userInfo);
-        setUserToken(userInfo.Token)
-
-        AsyncStorage.setItem('userInfo', JSON.stringify(userInfo))
-        AsyncStorage.setItem('userToken', userInfo.Token)
-
-        let token = "token " + userInfo.Token;
+        if(userInfo){        
+            setUserInfo(userInfo);
+            setUserToken(userInfo.Token)
+    
+            AsyncStorage.setItem('userInfo', JSON.stringify(userInfo))
+            AsyncStorage.setItem('userToken', userInfo.Token)            
+            var token = "token " + userInfo.Token;
+        }
 
         const userAccountInfo = await fetch(`${BASE_URL}/account/`, {
             method: 'GET',
@@ -44,12 +45,14 @@ export const AuthProvider = ({children }) => {
         .then(function(response){
             return response.json()
         })
-        .catch(error => {console.log(error)})
+        .catch(error => {console.log("My error "+error)})
 
-        let userAccount = userAccountInfo[0];
+        if(userInfo){
+            const userAccount = userAccountInfo[0];
 
-        setUserAccount(userAccount);
-        AsyncStorage.setItem('userAccount', JSON.stringify(userAccount))
+            setUserAccount(userAccount);
+            AsyncStorage.setItem('userAccount', JSON.stringify(userAccount))            
+        }
 
         const userTransactionList = await fetch(`${BASE_URL}/transactions/`, {
             method: 'GET',
@@ -61,10 +64,12 @@ export const AuthProvider = ({children }) => {
         .then(function(response){
             return response.json()
         })
-        .catch(error => {console.log(error)});
+        .catch(error => {console.log("my "+error)});
 
-        setUserTransactionList(userTransactionList);
-        AsyncStorage.setItem('userTransactionList', JSON.stringify(userTransactionList));
+        if(userInfo){
+            setUserTransactionList(userTransactionList);
+            AsyncStorage.setItem('userTransactionList', JSON.stringify(userTransactionList));            
+        }
 
         setIsLoading(false);
     }
@@ -106,6 +111,8 @@ export const AuthProvider = ({children }) => {
     }
 
     const register = (username, first_name, last_name, email, password1, phone, birthday, adress) => {
+        //var validPass = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
         birthday = birthday.split("/").reverse().join("-");
         let d = {
             "user":{
@@ -155,7 +162,7 @@ export const AuthProvider = ({children }) => {
                 'Content-type': 'application/json',
                 'Authorization' : token
             },
-            data:data
+            body:data
         })
         .then(function(response) {
             return response.json();
@@ -181,7 +188,7 @@ export const AuthProvider = ({children }) => {
                 'Content-type': 'application/json',
                 'Authorization' : token
             },
-            data:data
+            body:data
         })
         .then(function(response){
             return response.json();
@@ -189,13 +196,12 @@ export const AuthProvider = ({children }) => {
         .catch(function(error){
             console.log(error);
         })
-        console.log(data);
 
-        console.log(changePasswordInfo)
-    }
-
-    const DeleteTransaction = () => {
-        console.log("shall be deleted");
+        if(changePasswordInfo.detail == "password successfully updated") {
+            alert("Password successfully updated");
+        }else {
+            alert("An error occured, please retry");
+        }
     }
 
     useEffect(() => {
@@ -203,7 +209,7 @@ export const AuthProvider = ({children }) => {
     }, []);
  
     return(
-        <AuthContext.Provider value={{login, logout, register, transfer, changePassword, DeleteTransaction, isLoading, userToken , userInfo, userAccount, userTransactionList}}>
+        <AuthContext.Provider value={{login, logout, register, transfer, changePassword, isLoading, userToken , userInfo, userAccount, userTransactionList}}>
             {children}
         </AuthContext.Provider>
     );

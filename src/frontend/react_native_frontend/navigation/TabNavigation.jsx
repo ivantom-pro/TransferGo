@@ -57,8 +57,6 @@ export default function TabNavigator() {
             name="message"
             component={MessageScreen} 
             options={{
-              tabBarBadge: 4,
-              tarBarBadgeStyle: {backgroundColor: "#2137B2"},
               title: "Messages",
               tabBarLabel: "Message",
               tabBarIcon: ({ color, size }) => (

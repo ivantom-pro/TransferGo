@@ -1,8 +1,6 @@
 import React, { useContext } from "react";
 import { View, Text, StyleSheet, ScrollView, Touchable } from "react-native";
 import { AuthContext } from "../context/AuthContext";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import { TouchableOpacity } from "react-native-gesture-handler";
 
 const List = () => {
     const {userTransactionList} = useContext(AuthContext);
@@ -11,17 +9,18 @@ const List = () => {
     const listItems = data.map(
             (element) => {
                 let date = element.date.substring(0,10);
-                date = date.split("-").reverse().join("/");
+                date = date.split("-").reverse().join("-");
+                let time = element.date.substring(11,19);
                 return(
-                    <View style={styles.elt}>
+                    <View style={styles.elt} key={element.id} >
                         <View style={{flexDirection:'row', alignItems:'center'}}>
-                            <TouchableOpacity onPress={() => DeleteTransaction()}>
-                                <MaterialIcons name="delete" size={22} />
-                            </TouchableOpacity>
                             <Text style={{paddingLeft: 5}}>{element.amount} FCFA</Text>
                         </View>
                         <Text>{element.sender}</Text>
-                        <Text>{date}</Text>
+                        <View>
+                            <Text>{date}</Text>
+                            <Text>at {time}</Text>
+                        </View>
                     </View>                      
                 )
             }
@@ -53,7 +52,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         flexDirection: 'row',
         justifyContent: 'space-between',
-        padding: 20,
+        padding: 15,
         backgroundColor: '#ccc',
         borderRadius: 10,
         marginTop: 10,
@@ -68,5 +67,8 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         flexDirection: "row",
         padding: 20,
+        marginLeft: 10,
+        marginRight: 10,
+        borderRadius: 10,
     }
 })

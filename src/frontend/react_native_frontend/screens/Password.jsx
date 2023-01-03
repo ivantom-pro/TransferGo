@@ -8,6 +8,13 @@ const Password = ({navigation}) => {
     const [new_password, setNew_password] = useState(null);
     const [confirm_password, setConfirm_password] = useState(null);
     const {changePassword} = useContext(AuthContext);
+    const change = (old_password, new_password, confirm_password) => {
+        if(new_password == confirm_password) {
+            changePassword(old_password, new_password, confirm_password)
+        }else {
+            alert("Verify the new password fields are equal");
+        }
+    }
     return(
         <View>
             <Header label={"Change password"} {...navigation} />
@@ -36,7 +43,7 @@ const Password = ({navigation}) => {
                 />                
             </View>
             <View>
-                <TouchableOpacity style={styles.btn} onPress={() => {changePassword(old_password, new_password, confirm_password)}}>
+                <TouchableOpacity style={styles.btn} onPress={() => {change(old_password, new_password, confirm_password)}}>
                     <Text style={{color:"#fff", fontSize:"24"}}>Confirm</Text>    
                 </TouchableOpacity>               
             </View>
