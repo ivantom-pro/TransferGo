@@ -46,6 +46,7 @@ const login = async(username, password) => {
     let me = userAccount.balance;
     document.getElementById("me").innerHTML = me;
 
+    /*
     let amount = 1000;
     let type = "transfert"; //transfer, withdraw
     let number = 697667213;
@@ -72,13 +73,13 @@ const login = async(username, password) => {
         console.log("this is my error " +error);
     })
 
-    console.log(transferInfo);
+    console.log(transferInfo);*/
 
-    document.getElementById("id").innerHTML = met;
+    //document.getElementById("id").innerHTML = met;
     
 }
 
-//login(username, password);
+login(username, password);
 
 
 /*let user = JSON.stringify({username, first_name, last_name, email, password});
@@ -105,7 +106,3 @@ let o = {
   console.log(o.user.username)
 */
 
-
-for(var k = 0;k<=9;k+=3) {
-    console.log("Hello");
-}
