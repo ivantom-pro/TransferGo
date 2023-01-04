@@ -74,6 +74,47 @@ export const AuthProvider = ({children }) => {
         setIsLoading(false);
     }
 
+    const listRefresh = async(token) => {
+        AsyncStorage.removeItem('userTransactionList');
+
+        const userTransactionList = await fetch(`${BASE_URL}/transactions/`, {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json',
+                'Authorization' : token
+            }
+        })
+        .then(function(response){
+            return response.json()
+        })
+        .catch(error => {console.log("my "+error)});
+
+        setUserTransactionList(userTransactionList);
+        AsyncStorage.setItem('userTransactionList', JSON.stringify(userTransactionList));            
+    }
+
+    const accountRefresh = async(token) => {
+        AsyncStorage.removeItem('userAccount');
+
+        const userAccountInfo = await fetch(`${BASE_URL}/account/`, {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json',
+                'Authorization' : token
+            }
+        })
+        .then(function(response){
+            return response.json()
+        })
+        .catch(error => {console.log("My error "+error)})
+
+        const userAccount = userAccountInfo[0];
+        AsyncStorage.removeItem('userAccount');
+
+        setUserAccount(userAccount);
+        AsyncStorage.setItem('userAccount', JSON.stringify(userAccount)) 
+    }
+
     const logout = (username, password) => {
         setIsLoading(true);
         setUserToken(null);
@@ -172,8 +213,11 @@ export const AuthProvider = ({children }) => {
         })
         
         if(transferInfo.id) {
-            alert('Transaction completed');
+            accountRefresh(token);
+            listRefresh(token);
+            alert("Transaction completed\n Amount : "+amount+"\nTo : "+number)
         }else {
+            console.log(userInfo.token)
             alert('An error occured')
         }
     }
