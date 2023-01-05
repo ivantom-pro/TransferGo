@@ -3,10 +3,10 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
 import ProfilScreen from "../screens/ProfilScreen";
-import TransferScreen from "../screens/TransferScreen";
 import AccountScreen from "../screens/AccountScreen";
 import MessageScreen from "../screens/MessageScreen";
 import Transactions from "../screens/Transactions";
+import Accountmanager from "../screens/AccountManager";
 
 const Tab = createBottomTabNavigator();
 
@@ -30,10 +30,10 @@ export default function TabNavigator() {
           />
 
           <Tab.Screen
-            name="Transaction1"
-            component={TransferScreen}
+            name="Transaction"
+            component={Transactions}
             options={{
-              title: "Transaction1",
+              title: "Transaction",
               tabBarLabel: "Transaction",
               tabBarIcon: ({ color, size }) => (
                 <MaterialIcons name="attach-money" color={color} size={size} />
@@ -43,7 +43,7 @@ export default function TabNavigator() {
 
         <Tab.Screen
             name="account"
-            component={AccountScreen}
+            component={Accountmanager}
             options={{
               title: "My Account",
               tabBarLabel: "Account",
@@ -57,8 +57,6 @@ export default function TabNavigator() {
             name="message"
             component={MessageScreen} 
             options={{
-              tabBarBadge: 4,
-              tarBarBadgeStyle: {backgroundColor: "#2137B2"},
               title: "Messages",
               tabBarLabel: "Message",
               tabBarIcon: ({ color, size }) => (

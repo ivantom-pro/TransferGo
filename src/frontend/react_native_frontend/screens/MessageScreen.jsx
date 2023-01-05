@@ -1,8 +1,6 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import Header from "../components/Header";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-
 
 const MessageScreen = ({navigation}) => {
     return (
@@ -12,15 +10,14 @@ const MessageScreen = ({navigation}) => {
                 <Text style={{
                     fontSize: 32, 
                     color: "#fff", 
-                    padding: 30, 
+                    padding: 30,
                 }}>
-                    Soon Available
+                    Discussion with our customer center available soon Available
                 </Text>
             </View> 
         </View>
-
     )
-}
+};
 
 export default MessageScreen;
 

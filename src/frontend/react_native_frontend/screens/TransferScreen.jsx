@@ -1,9 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-
 import Header from "../components/Header";
-
 
 const TransferScreen = ({navigation}) => {
     return (
@@ -13,7 +11,7 @@ const TransferScreen = ({navigation}) => {
                 <Text style={styles.txt}>Recharge account</Text>
                 <MaterialIcons name="arrow-forward-ios"  size={22} color="#fff"/>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.btn} onPress={alert('ssgsdg')}>
+            <TouchableOpacity style={styles.btn} onPress={() => {navigation.navigate('DoTransfer')}}>
                 <Text style={styles.txt}>Money transfer</Text>
                 <MaterialIcons name="arrow-forward-ios"  size={22} color="#fff"/>
             </TouchableOpacity>
@@ -27,7 +25,7 @@ const TransferScreen = ({navigation}) => {
             </TouchableOpacity>
         </View>
     )
-}
+};
 
 export default TransferScreen;
 
@@ -48,4 +46,4 @@ const styles = StyleSheet.create({
     txt: {
         color: "white",
     }
-})
+});

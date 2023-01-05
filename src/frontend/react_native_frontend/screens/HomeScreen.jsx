@@ -1,10 +1,7 @@
-import { StatusBar } from "expo-status-bar";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-
-// screens
 import ProfilScreen from "./ProfilScreen";
 import TransferScreen from "./TransferScreen";
 import SettingScreen from "./SettingScreen";
@@ -13,7 +10,6 @@ import HelpScreen from "./HelpScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
-
 export default function App() {
   return (
     <>

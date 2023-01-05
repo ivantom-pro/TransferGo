@@ -1,11 +1,27 @@
 import React, { useState, useContext } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import Header from "../components/Header";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { AuthContext } from "../context/AuthContext";
 
 const ProfilScreen = ({navigation}) => {
     const {userInfo} = useContext(AuthContext);
+    const {userAccount} = useContext(AuthContext);
+    const {userTransactionList} = useContext(AuthContext);
+    let bd = userInfo.profile.birthday;
+    bd = bd.split("-").reverse().join("-");
+    const last = (userTransactionList) => {
+        var lastDate = "None";
+
+        if(!userTransactionList.length) {
+            return lastDate;
+        }else {
+            lastDate = userTransactionList[0].date;
+            lastDate = (lastDate.substring(0,10));
+            lastDate = lastDate.split("-").reverse().join("-");
+            return lastDate;          
+        }
+    }
+
     return (
         <View>
             <Header label={"Profile"} {...navigation} />
@@ -18,11 +34,11 @@ const ProfilScreen = ({navigation}) => {
             <ScrollView style={{backgroundColor: "#fff", paddingBottom: 100}}>
                 <View style={styles.align}>
                     <Text>Balance</Text>
-                    <Text>17500 FCFA</Text>
+                    <Text>{userAccount.balance} FCFA</Text>
                 </View>
                 <View style={styles.align}>
                     <Text>Last transaction</Text>
-                    <Text>24-25-2022</Text>
+                    <Text>{last(userTransactionList)}</Text>
                 </View>
                 <View style={styles.align}>
                         <Text>Phone</Text>                        
@@ -30,7 +46,7 @@ const ProfilScreen = ({navigation}) => {
                 </View>
                 <View style={styles.align}>
                     <Text>My birthday</Text>
-                    <Text>{userInfo.profile.birthday} </Text>
+                    <Text>{bd} </Text>
                 </View>
                 <View style={styles.align}>
                     <Text>Mail</Text>
