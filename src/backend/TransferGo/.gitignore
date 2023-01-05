@@ -191,4 +191,5 @@ venv
 *.log
 *media*
 .idea
+.sqlite3
 
